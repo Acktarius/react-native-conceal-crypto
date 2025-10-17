@@ -1,0 +1,85 @@
+apply plugin: 'com.android.library'
+
+group = 'expo.modules.concealcrypto'
+version = '0.1.0'
+
+def expoModulesCorePlugin = new File(
+    project(":expo-modules-core").projectDir.absolutePath,
+    "ExpoModulesCorePlugin.gradle"
+)
+apply from: expoModulesCorePlugin
+applyKotlinExpoModulesCorePlugin()
+useCoreDependencies()
+useExpoPublishing()
+
+// Toggle to follow managed SDK versions or custom ones
+def useManagedAndroidSdkVersions = false
+if (useManagedAndroidSdkVersions) {
+  useDefaultAndroidSdkVersions()
+} else {
+  buildscript {
+    ext.safeExtGet = { prop, fallback ->
+      rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+    }
+  }
+  project.android {
+    compileSdkVersion safeExtGet("compileSdkVersion", 36)
+    defaultConfig {
+      minSdkVersion safeExtGet("minSdkVersion", 24)
+      targetSdkVersion safeExtGet("targetSdkVersion", 36)
+    }
+  }
+}
+
+android {
+  namespace "expo.modules.concealcrypto"
+
+  defaultConfig {
+    versionCode 1
+    versionName "0.1.0"
+
+    // Link to your native library
+    externalNativeBuild {
+      cmake {
+        // path is relative to this directory
+        path "CMakeLists.txt"
+      }
+    }
+
+    // Tell Gradle to compile for all standard ABIs
+    ndk {
+      abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+    }
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+
+  lintOptions {
+    abortOnError false
+  }
+
+  // Required by Nitro to handle shared C++ libraries
+  externalNativeBuild {
+    cmake {
+      version "3.10.2"
+    }
+  }
+}
+
+repositories {
+  google()
+  mavenCentral()
+}
+
+dependencies {
+  // Core Expo deps come from useCoreDependencies()
+  implementation "com.facebook.fbjni:fbjni:0.3.0"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+
+  // Adds the Nitro runtime for JS↔C++
+  implementation "com.margelo:react-native-nitro-modules:1.0.0"
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "react-native-conceal-crypto": ["../src/index"],
+      "react-native-conceal-crypto/*": ["../src/*"]
+    }
+  }
+}

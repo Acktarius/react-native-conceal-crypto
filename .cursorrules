@@ -1,0 +1,106 @@
+description: Rules for building React Native Nitro JSI modules with native C++ code integration.
+globs:
+  - "**/*.cpp"
+  - "**/*.hpp"
+  - "**/*.h"
+  - "**/*.mm"
+  - "**/*.java"
+  - "**/*.kt"
+  - "**/*.ts"
+  - "**/*.tsx"
+
+rules:
+  # Project Purpose
+  - This workspace defines a React Native library named `react-native-conceal-crypto`.
+  - The project is built as a **Nitro Module** that exposes native C++ functions to JavaScript through the JSI interface.
+  - Nitro Modules handle cross‑platform binding via automatically generated C++, Swift, and Kotlin bridges.
+
+  # Source Layout
+  - C++ native logic is stored under `/cpp`.
+      - Files such as `ConcealCrypto.cpp`, `ConcealCrypto.h`, and `install.cpp` contain the cryptographic implementations and Nitro `HybridObject` definitions.
+  - The JS/TS glue layer lives under `/src`.
+      - The root entry file (`src/index.ts`) loads the Nitro‑generated bindings and provides the user‑facing JavaScript API.
+  - Android‑specific JNI integration is in `/android` and references the compiled C++ shared library via `CMakeLists.txt`.
+  - iOS integration is within `/ios`, bridged through Objective‑C++ (`.mm`) files and a `.podspec`.
+
+  # Nitro Configuration
+  - The module uses a `nitro.json` file with keys:
+      - `cxxNamespace`: ["concealcrypto"]
+      - `ios.iosModuleName`: ConcealCrypto
+      - `android.androidNamespace`: ["concealcrypto"]
+      - `android.androidCxxLibName`: ConcealCrypto
+      - `autolinking`: {}  # auto‑registration handled by Nitrogen
+  - Generated bindings live under `nitrogen/generated/` and should be committed to version control.
+
+  # TypeScript Nitro Specs
+  - Each Nitro hybrid object must have a `.nitro.ts` file under `src/specs/`.
+      - Example: `src/specs/ConcealCrypto.nitro.ts`
+      - These define the public interface exposed to JS (e.g., `encrypt()`, `decrypt()`, `hextobin()`).
+  - Run `npx nitrogen` after editing a `.nitro.ts` file to regenerate bindings.
+
+  # Implementation Conventions
+  - Use C++17 or newer syntax and follow Nitro’s `HybridObject` pattern:
+        - Derive each hybrid class from `HybridObject`.
+        - Implement logic in C++ methods; register them through `registerHybrids(...)`.
+  - Keep namespaces aligned with `cxxNamespace` defined in nitro.json.
+  - JSI functions must be deterministic and exception‑safe.
+  - Use RAII for handling any native memory allocations or crypto buffers.
+
+  # Build Workflow
+  - Build tooling: Node 22 + npm, Gradle 8+, Xcode 15+, and CMake via Android NDK.
+  - For Android: `System.loadLibrary("ConcealCrypto")` must correspond to the CMake library name.
+  - For iOS: ensure the Podspec’s `source_files` includes `cpp/**/*.cpp` and `ios/**/*.mm`.
+  - When adding native code, update both `CMakeLists.txt` and `.podspec`.
+
+  # Package / Publishing
+  - The `files` field in `package.json` should *only* publish: `cpp/`, `ios/`, `android/`, `src/`, and generated bindings.
+  - Exclude `example/` and build outputs using `.npmignore` or `files` listing.
+  - Consumers import the module as:
+        ```
+        import concealCrypto from 'react-native-conceal-crypto';
+        ```
+
+  # Cursor Authoring Directives
+  - When generating new code:
+      - Default to the Nitro Modules style rather than legacy TurboModules.
+      - Prefer C++ for computational code and TypeScript for interface definitions.
+      - Maintain consistent folder placement (`cpp`, `src/specs`, `android`, `ios`).
+      - Always reference existing namespace `concealcrypto`.
+  - When asked to write bindings or install scripts, follow the Nitro autolinking mechanism (no manual bridge).
+  - Favor strong type safety in TypeScript and consistent naming between TS specs and C++ hybrid classes.
+  - For documentation snippets or templates, prefer concise examples patterned after Nitro’s official examples.
+
+rules:
+  - context: nitro
+    description: Memory handling rules for ArrayBuffer in React Native Nitro Modules using C++ JSI.
+    guidelines:
+      - Use `ArrayBuffer` for transferring binary data between JS ↔ C++ (zero copy, native speed).
+      - Always map TypeScript `ArrayBuffer` to `std::shared_ptr<margelo::nitro::ArrayBuffer>` in C++.
+      - Buffers **allocated in C++** (via `ArrayBuffer::allocate`) are native‑owned and valid indefinitely.
+      - Buffers **received from JS** are JS‑owned and expire after the synchronous call returns.
+      - If you need to keep a JS‑owned ArrayBuffer beyond the current call, create a copy with `ArrayBuffer::copy(input)`.
+      - For async use or threading, **never** retain JS‑owned ArrayBuffers without copying.
+      - When returning data to JS, allocate a new ArrayBuffer in C++ and return the shared pointer.
+      - In the TypeScript spec, always define binary parameters and results as `ArrayBuffer`, never `Uint8Array` or `number[]`.
+      - JS users can freely wrap returned buffers in Typed Arrays (e.g. `new Uint8Array(resultBuffer)`).
+      - Avoid repeated copying; rely on Nitro’s zero‑copy semantics for synchronous operations.
+
+rules:
+  - context: tsconfig-nitro
+    description: TypeScript configuration suited to pure Nitro Modules.
+    guidelines:
+      - Remove any dependency on expo-module-scripts.
+      - Use "target": "ESNext", "module": "ESNext" for Nitrogen’s TypeScript AST parser.
+      - Keep noEmit: true; JSI does not use compiled JS.
+      - Include only src and nitro.json inputs.
+      - Exclude node_modules and test folders.
+
+rules:
+  - context: nitrogen-developer-tool
+    description: Only library authors run Nitrogen. It is not part of user installation.
+    guidelines:
+      - Nitrogen (`npx nitrogen`) must be run by maintainers after editing .nitro.ts specs.
+      - Commit generated files under nitrogen/generated.
+      - Library consumers do NOT run Nitrogen; Metro, Gradle, and Xcode link those files automatically.
+      - Documentation should never instruct end users to run `npx nitrogen`.
+

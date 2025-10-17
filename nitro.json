@@ -1,0 +1,15 @@
+{
+    "$schema": "https://nitro.margelo.com/nitro.schema.json",
+    "cxxNamespace": ["concealcrypto"],
+    "ios": {
+      "iosModuleName": "ConcealCrypto"
+    },
+    "android": {
+      "androidNamespace": ["concealcrypto"],
+      "androidCxxLibName": "ConcealCrypto"
+    },
+    "autolinking": {},
+    "ignorePaths": ["**/node_modules"],
+    "gitAttributesGeneratedFlag": true
+  }
+  
