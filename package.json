@@ -5,14 +5,17 @@
   "main": "src/index.ts",
   "react-native": "src/index.ts",
   "types": "src/index.d.ts",
-"scripts": {
-  "build": "npx nitrogen",
-  "clean": "npx nitrogen clean && cd android && ./gradlew clean",
-  "test": "jest",
-  "lint": "eslint src --ext .ts,.tsx",
-  "open:ios": "xed example/ios",
-  "open:android": "open -a \"Android Studio\" example/android"
-},
+  "scripts": {
+    "build": "npx nitrogen",
+    "clean": "npx nitrogen clean && cd android && ./gradlew clean",
+    "test": "jest",
+    "lint": "eslint src --ext .ts,.tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,json}\"",
+    "check:cpp": "clang-format --dry-run --Werror cpp/**/*.cpp nitrogen/generated/**/*.cpp && echo Check complete!",
+    "format:cpp": "clang-format -i 'cpp/**/*.{cpp,hpp,c,h}' 'nitrogen/generated/**/*.{cpp,hpp,h}'",
+    "open:ios": "xed example/ios",
+    "open:android": "open -a \"Android Studio\" example/android"
+  },
   "keywords": [
     "react-native",
     "nitro",
@@ -33,14 +36,20 @@
   "author": "Acktarius <acktarius@protonmail.com> (https://github.com/Acktarius)",
   "homepage": "https://github.com/Acktarius/react-native-conceal-crypto#readme",
   "dependencies": {
-    "react-native-nitro-modules": "^1.0.0"
+    "react-native-nitro-modules": ">=0.0.8"
   },
   "devDependencies": {
-    "expo-module-scripts": "^5.0.7",
-    "typescript": "^5.5.0",
     "@types/react": "~19.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
+    "clang-format": "^1.8.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-native": "^5.0.0",
     "expo": "^54.0.12",
-    "react-native": "0.81.4"
+    "expo-module-scripts": "^5.0.7",
+    "react-native": "0.81.4",
+    "typescript": "^5.5.0"
   },
   "peerDependencies": {
     "expo": "*",
