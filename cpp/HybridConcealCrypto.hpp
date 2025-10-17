@@ -8,6 +8,7 @@
  */
 #pragma once
 #include "../nitrogen/generated/shared/c++/HybridConcealCryptoSpec.hpp"
+#include "Hmac.hpp"
 #include <vector>
 #include <string>
 
@@ -23,6 +24,8 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   std::shared_ptr<NitroModules::ArrayBuffer> chacha8(const std::shared_ptr<NitroModules::ArrayBuffer>& input,
                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& key,
                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& iv) override;
+  std::shared_ptr<NitroModules::ArrayBuffer> hmacSha1(const std::shared_ptr<NitroModules::ArrayBuffer>& key,
+                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& data) override;
 };
 
 }  // namespace margelo::nitro::concealcrypto

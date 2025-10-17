@@ -16,6 +16,7 @@ add_library(${PACKAGE_NAME} SHARED
   ../cpp/HybridConcealCrypto.cpp
   ../cpp/ConcealCrypto.cpp
   ../cpp/chacha8.c
+  ../cpp/Hmac.cpp
 )
 
 #---------------------------------------------

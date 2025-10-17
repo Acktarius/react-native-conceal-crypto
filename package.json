@@ -35,9 +35,6 @@
   "license": "MIT",
   "author": "Acktarius <acktarius@protonmail.com> (https://github.com/Acktarius)",
   "homepage": "https://github.com/Acktarius/react-native-conceal-crypto#readme",
-  "dependencies": {
-    "react-native-nitro-modules": ">=0.0.8"
-  },
   "devDependencies": {
     "@types/react": "~19.1.0",
     "@typescript-eslint/eslint-plugin": "^8.46.1",
@@ -48,7 +45,9 @@
     "eslint-plugin-react-native": "^5.0.0",
     "expo": "^54.0.12",
     "expo-module-scripts": "^5.0.7",
+    "nitrogen": "^0.30.2",
     "react-native": "0.81.4",
+    "react-native-nitro-modules": "^0.30.2",
     "typescript": "^5.5.0"
   },
   "peerDependencies": {

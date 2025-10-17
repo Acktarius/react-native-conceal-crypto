@@ -86,6 +86,14 @@ namespace margelo::nitro::concealcrypto {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::shared_ptr<ArrayBuffer> hmacSha1(const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& data) override {
+      auto __result = _swiftPart.hmacSha1(ArrayBufferHolder(key), ArrayBufferHolder(data));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
 
   private:
     ConcealCrypto::HybridConcealCryptoSpec_cxx _swiftPart;

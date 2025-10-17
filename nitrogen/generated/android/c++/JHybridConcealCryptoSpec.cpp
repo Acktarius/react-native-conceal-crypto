@@ -56,5 +56,10 @@ namespace margelo::nitro::concealcrypto {
     auto __result = method(_javaPart, JArrayBuffer::wrap(input), JArrayBuffer::wrap(key), JArrayBuffer::wrap(iv));
     return __result->cthis()->getArrayBuffer();
   }
+  std::shared_ptr<ArrayBuffer> JHybridConcealCryptoSpec::hmacSha1(const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& data) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JArrayBuffer::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* key */, jni::alias_ref<JArrayBuffer::javaobject> /* data */)>("hmacSha1");
+    auto __result = method(_javaPart, JArrayBuffer::wrap(key), JArrayBuffer::wrap(data));
+    return __result->cthis()->getArrayBuffer();
+  }
 
 } // namespace margelo::nitro::concealcrypto

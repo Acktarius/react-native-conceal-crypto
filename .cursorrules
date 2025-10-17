@@ -104,3 +104,11 @@ rules:
       - Library consumers do NOT run Nitrogen; Metro, Gradle, and Xcode link those files automatically.
       - Documentation should never instruct end users to run `npx nitrogen`.
 
+rules: 
+  - context: When implementing low-level or performance-sensitive functions (e.g., crypto primitives, loops, or array math) used through JSI or Nitrogen bindings
+    guidelines:
+      - Mark stateless arithmetic or bitwise operations such as rotate, swap, or mix functions as constexpr or inline to allow compile-time evaluation and reduce call overhead during tight computation loops.
+      - Throw standard C++ exceptions (e.g., std::invalid_argument, std::range_error) for synchronous Nitro APIs. If the function is exposed asynchronously, ensure exceptions are translated into JS-visible errors through Nitro’s or JSI’s error boundary macros to guarantee reliable propagation to the JavaScript thread.
+      - For frequently called native functions, minimize heap churn by pre-allocating vectors or scratch buffers inside static or member scope where possible. Prefer reserve() and buffer reuse patterns to prevent repeated dynamic allocation and deallocation.
+      - Use references or std::span when manipulating data internally, and only allocate ArrayBuffer objects at entry/exit boundaries for JSI compatibility.
+      - Keep native code deterministic and avoid blocking JS threads; any I/O, hashing, or heavy loops should run off-thread if called at high frequency.

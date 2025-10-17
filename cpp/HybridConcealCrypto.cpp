@@ -85,3 +85,13 @@ std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::chacha8(
 
   return std::make_shared<NitroModules::ArrayBuffer>(output.data(), output.size());
 }
+
+/**
+ * HMAC-SHA1 implementation for TOTP computation
+ */
+std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::hmacSha1(
+  const std::shared_ptr<NitroModules::ArrayBuffer>& key,
+  const std::shared_ptr<NitroModules::ArrayBuffer>& data
+) {
+  return Hmac::hmacSha1(key, data);
+}

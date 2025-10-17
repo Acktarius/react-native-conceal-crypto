@@ -42,6 +42,40 @@ export default function App() {
     }
   };
 
+  const testHmacSha1 = () => {
+    try {
+      // Test HMAC-SHA1 with known test vectors
+      const key = concealCrypto.hextobin('0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b');
+      const data = new TextEncoder().encode('Hi There');
+      const hmacResult = concealCrypto.hmacSha1(key, data.buffer);
+      const hmacHex = concealCrypto.bintohex(hmacResult);
+      
+      // Expected result for RFC 2202 test case 1
+      const expected = 'b617318655057264e28bc0b6fb378c8ef146be00';
+      
+      setResult(`HMAC-SHA1 Test:\nKey: 0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b\nData: "Hi There"\nResult: ${hmacHex}\nExpected: ${expected}\nMatch: ${hmacHex.toLowerCase() === expected}`);
+    } catch (error) {
+      Alert.alert('Error', `HMAC-SHA1 test failed: ${(error as Error).message}`);
+    }
+  };
+
+  const testHmacSha1Rfc2202 = () => {
+    try {
+      // RFC 2202 Test Case 1: "key" and "The quick brown fox jumps over the lazy dog"
+      const key = new TextEncoder().encode('key');
+      const data = new TextEncoder().encode('The quick brown fox jumps over the lazy dog');
+      const hmacResult = concealCrypto.hmacSha1(key.buffer, data.buffer);
+      const hmacHex = concealCrypto.bintohex(hmacResult);
+      
+      // Expected result from RFC 2202
+      const expected = 'de7c9b85b8b78aa6bc8a7a36f70a90701c9db4d9';
+      
+      setResult(`RFC 2202 Test Case:\nKey: "key"\nData: "The quick brown fox jumps over the lazy dog"\nResult: ${hmacHex}\nExpected: ${expected}\nMatch: ${hmacHex.toLowerCase() === expected}`);
+    } catch (error) {
+      Alert.alert('Error', `RFC 2202 HMAC-SHA1 test failed: ${(error as Error).message}`);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container}>
@@ -79,6 +113,10 @@ export default function App() {
           <Button title="Test ChaCha8 Encryption" onPress={testChacha8} />
           <View style={styles.buttonSpacer} />
           <Button title="Test Hex Conversion" onPress={testHexConversion} />
+          <View style={styles.buttonSpacer} />
+          <Button title="Test HMAC-SHA1 (RFC 2202)" onPress={testHmacSha1} />
+          <View style={styles.buttonSpacer} />
+          <Button title="Test HMAC-SHA1 (Quick Brown Fox)" onPress={testHmacSha1Rfc2202} />
         </Group>
 
         <Group name="Result">
