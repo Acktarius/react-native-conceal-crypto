@@ -36,6 +36,7 @@
   "author": "Acktarius <acktarius@protonmail.com> (https://github.com/Acktarius)",
   "homepage": "https://github.com/Acktarius/react-native-conceal-crypto#readme",
   "devDependencies": {
+    "@react-native-community/cli": "latest",
     "@types/react": "~19.1.0",
     "@typescript-eslint/eslint-plugin": "^8.46.1",
     "@typescript-eslint/parser": "^8.46.1",

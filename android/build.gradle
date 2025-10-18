@@ -38,14 +38,6 @@ android {
     versionCode 1
     versionName "0.1.0"
 
-    // Link to your native library
-    externalNativeBuild {
-      cmake {
-        // path is relative to this directory
-        path "CMakeLists.txt"
-      }
-    }
-
     // Tell Gradle to compile for all standard ABIs
     ndk {
       abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
@@ -66,6 +58,7 @@ android {
   externalNativeBuild {
     cmake {
       version "3.10.2"
+      path("CMakeLists.txt")
     }
   }
 }
