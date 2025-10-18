@@ -24,6 +24,9 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   std::shared_ptr<NitroModules::ArrayBuffer> chacha8(const std::shared_ptr<NitroModules::ArrayBuffer>& input,
                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& key,
                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& iv) override;
+  std::shared_ptr<NitroModules::ArrayBuffer> chacha12(const std::shared_ptr<NitroModules::ArrayBuffer>& input,
+                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& key,
+                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& iv) override;
   std::shared_ptr<NitroModules::ArrayBuffer> hmacSha1(const std::shared_ptr<NitroModules::ArrayBuffer>& key,
                                                        const std::shared_ptr<NitroModules::ArrayBuffer>& data) override;
 };

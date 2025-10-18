@@ -7,7 +7,7 @@
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.
  */
 #include "HybridConcealCrypto.hpp"
-#include "chacha8.h"
+#include "chacha.h"
 #include <sstream>
 #include <iomanip>
 #include <stdexcept>
@@ -57,7 +57,7 @@ std::string HybridConcealCrypto::bintohex(const std::shared_ptr<NitroModules::Ar
 }
 
 /**
- * Real ChaCha8 encryption using Conceal Core implementation.
+ * ChaCha8 encryption.
  */
 std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::chacha8(
   const std::shared_ptr<NitroModules::ArrayBuffer>& input,
@@ -66,21 +66,51 @@ std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::chacha8(
 ) {
   if (!input || !key || !iv) 
     throw std::invalid_argument("Input, key and IV must not be null");
-  if (key->size() != CHACHA8_KEY_SIZE)
+  if (key->size() != CHACHA_KEY_SIZE)
     throw std::invalid_argument("Key must be exactly 32 bytes");
-  if (iv->size() != CHACHA8_IV_SIZE)
+  if (iv->size() != CHACHA_IV_SIZE)
     throw std::invalid_argument("IV must be exactly 8 bytes");
 
   // Allocate output buffer
   std::vector<uint8_t> output(input->size());
   
-  // Call the real ChaCha8 function
-  ::chacha8(
-    input->data(),           // input data
-    input->size(),           // input length
-    static_cast<const uint8_t*>(key->data()),  // key
-    static_cast<const uint8_t*>(iv->data()),   // iv
-    reinterpret_cast<char*>(output.data())     // output
+  // Call the modern ChaCha8 XOR function
+  chacha8_xor(
+    static_cast<const uint8_t*>(input->data()),   // input data
+    input->size(),                                // input length
+    static_cast<const uint8_t*>(key->data()),     // key
+    static_cast<const uint8_t*>(iv->data()),     // iv
+    output.data()                                 // output
+  );
+
+  return std::make_shared<NitroModules::ArrayBuffer>(output.data(), output.size());
+}
+
+/**
+ * Real ChaCha12 encryption using Conceal Core implementation.
+ */
+std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::chacha12(
+  const std::shared_ptr<NitroModules::ArrayBuffer>& input,
+  const std::shared_ptr<NitroModules::ArrayBuffer>& key,
+  const std::shared_ptr<NitroModules::ArrayBuffer>& iv
+) {
+  if (!input || !key || !iv) 
+    throw std::invalid_argument("Input, key and IV must not be null");
+  if (key->size() != CHACHA_KEY_SIZE)
+    throw std::invalid_argument("Key must be exactly 32 bytes");
+  if (iv->size() != CHACHA_IV_SIZE)
+    throw std::invalid_argument("IV must be exactly 8 bytes");
+
+  // Allocate output buffer
+  std::vector<uint8_t> output(input->size());
+  
+  // Call the modern ChaCha12 XOR function
+  chacha12_xor(
+    static_cast<const uint8_t*>(input->data()),   // input data
+    input->size(),                                // input length
+    static_cast<const uint8_t*>(key->data()),     // key
+    static_cast<const uint8_t*>(iv->data()),     // iv
+    output.data()                                 // output
   );
 
   return std::make_shared<NitroModules::ArrayBuffer>(output.data(), output.size());

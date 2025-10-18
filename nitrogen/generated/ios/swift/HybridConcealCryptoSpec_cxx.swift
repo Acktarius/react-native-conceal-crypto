@@ -146,6 +146,18 @@ open class HybridConcealCryptoSpec_cxx {
   }
   
   @inline(__always)
+  public final func chacha12(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer) -> bridge.Result_std__shared_ptr_ArrayBuffer__ {
+    do {
+      let __result = try self.__implementation.chacha12(input: input, key: key, iv: iv)
+      let __resultCpp = __result.getArrayBuffer()
+      return bridge.create_Result_std__shared_ptr_ArrayBuffer__(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_ArrayBuffer__(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func hmacSha1(key: ArrayBuffer, data: ArrayBuffer) -> bridge.Result_std__shared_ptr_ArrayBuffer__ {
     do {
       let __result = try self.__implementation.hmacSha1(key: key, data: data)

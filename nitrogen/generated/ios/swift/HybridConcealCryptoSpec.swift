@@ -17,6 +17,7 @@ public protocol HybridConcealCryptoSpec_protocol: HybridObject {
   func hextobin(hex: String) throws -> ArrayBuffer
   func bintohex(buffer: ArrayBuffer) throws -> String
   func chacha8(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer) throws -> ArrayBuffer
+  func chacha12(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer) throws -> ArrayBuffer
   func hmacSha1(key: ArrayBuffer, data: ArrayBuffer) throws -> ArrayBuffer
 }
 

@@ -7,7 +7,7 @@ Public domain.
 #include <memory.h>
 #include <stdio.h>
 
-#include "chacha8.h"
+#include "chacha.h"
 #include "int-util.h"
 
 /*
@@ -20,7 +20,7 @@ Public domain.
  * The following macros load words from an array of bytes with
  * different types of endianness, and vice versa.
  */
-#define U8TO32_LITTLE(p) SWAP32LE(((uint32_t *)(p))[0])
+#define U8TO32_LITTLE(p) SWAP32LE(((const uint32_t *)(p))[0])
 #define U32TO8_LITTLE(p, v) (((uint32_t *)(p))[0] = SWAP32LE(v))
 
 #define ROTATE(v, c) (rol32(v, c))
@@ -40,16 +40,16 @@ Public domain.
 
 static const char sigma[] = "expand 32-byte k";
 
-void chacha8(const void *data, size_t length, const uint8_t *key, const uint8_t *iv, char *cipher)
+/* Core block function with configurable rounds */
+void chacha_block(uint8_t out[64],
+                  const uint8_t key[32],
+                  const uint8_t nonce[8],
+                  uint64_t counter,
+                  int rounds)
 {
   uint32_t x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
   uint32_t j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
-  char *ctarget = 0;
-  char tmp[64];
   int i;
-
-  if (!length)
-    return;
 
   j0 = U8TO32_LITTLE(sigma + 0);
   j1 = U8TO32_LITTLE(sigma + 4);
@@ -63,115 +63,93 @@ void chacha8(const void *data, size_t length, const uint8_t *key, const uint8_t 
   j9 = U8TO32_LITTLE(key + 20);
   j10 = U8TO32_LITTLE(key + 24);
   j11 = U8TO32_LITTLE(key + 28);
-  j12 = 0;
-  j13 = 0;
-  j14 = U8TO32_LITTLE(iv + 0);
-  j15 = U8TO32_LITTLE(iv + 4);
+  j12 = (uint32_t)(counter & 0xFFFFFFFF);
+  j13 = (uint32_t)(counter >> 32);
+  j14 = U8TO32_LITTLE(nonce + 0);
+  j15 = U8TO32_LITTLE(nonce + 4);
 
-  for (;;)
+  x0 = j0; x1 = j1; x2 = j2; x3 = j3;
+  x4 = j4; x5 = j5; x6 = j6; x7 = j7;
+  x8 = j8; x9 = j9; x10 = j10; x11 = j11;
+  x12 = j12; x13 = j13; x14 = j14; x15 = j15;
+
+  for (i = rounds; i > 0; i -= 2)
   {
-    if (length < 64)
-    {
-      memcpy(tmp, data, length);
-      data = tmp;
-      ctarget = cipher;
-      cipher = tmp;
-    }
-    x0 = j0;
-    x1 = j1;
-    x2 = j2;
-    x3 = j3;
-    x4 = j4;
-    x5 = j5;
-    x6 = j6;
-    x7 = j7;
-    x8 = j8;
-    x9 = j9;
-    x10 = j10;
-    x11 = j11;
-    x12 = j12;
-    x13 = j13;
-    x14 = j14;
-    x15 = j15;
-    for (i = 8; i > 0; i -= 2)
-    {
-      QUARTERROUND(x0, x4, x8, x12)
-      QUARTERROUND(x1, x5, x9, x13)
-      QUARTERROUND(x2, x6, x10, x14)
-      QUARTERROUND(x3, x7, x11, x15)
-      QUARTERROUND(x0, x5, x10, x15)
-      QUARTERROUND(x1, x6, x11, x12)
-      QUARTERROUND(x2, x7, x8, x13)
-      QUARTERROUND(x3, x4, x9, x14)
-    }
-    x0 = PLUS(x0, j0);
-    x1 = PLUS(x1, j1);
-    x2 = PLUS(x2, j2);
-    x3 = PLUS(x3, j3);
-    x4 = PLUS(x4, j4);
-    x5 = PLUS(x5, j5);
-    x6 = PLUS(x6, j6);
-    x7 = PLUS(x7, j7);
-    x8 = PLUS(x8, j8);
-    x9 = PLUS(x9, j9);
-    x10 = PLUS(x10, j10);
-    x11 = PLUS(x11, j11);
-    x12 = PLUS(x12, j12);
-    x13 = PLUS(x13, j13);
-    x14 = PLUS(x14, j14);
-    x15 = PLUS(x15, j15);
-
-    x0 = XOR(x0, U8TO32_LITTLE((uint8_t *)data + 0));
-    x1 = XOR(x1, U8TO32_LITTLE((uint8_t *)data + 4));
-    x2 = XOR(x2, U8TO32_LITTLE((uint8_t *)data + 8));
-    x3 = XOR(x3, U8TO32_LITTLE((uint8_t *)data + 12));
-    x4 = XOR(x4, U8TO32_LITTLE((uint8_t *)data + 16));
-    x5 = XOR(x5, U8TO32_LITTLE((uint8_t *)data + 20));
-    x6 = XOR(x6, U8TO32_LITTLE((uint8_t *)data + 24));
-    x7 = XOR(x7, U8TO32_LITTLE((uint8_t *)data + 28));
-    x8 = XOR(x8, U8TO32_LITTLE((uint8_t *)data + 32));
-    x9 = XOR(x9, U8TO32_LITTLE((uint8_t *)data + 36));
-    x10 = XOR(x10, U8TO32_LITTLE((uint8_t *)data + 40));
-    x11 = XOR(x11, U8TO32_LITTLE((uint8_t *)data + 44));
-    x12 = XOR(x12, U8TO32_LITTLE((uint8_t *)data + 48));
-    x13 = XOR(x13, U8TO32_LITTLE((uint8_t *)data + 52));
-    x14 = XOR(x14, U8TO32_LITTLE((uint8_t *)data + 56));
-    x15 = XOR(x15, U8TO32_LITTLE((uint8_t *)data + 60));
-
-    j12 = PLUSONE(j12);
-    if (!j12)
-    {
-      j13 = PLUSONE(j13);
-      /* stopping at 2^70 bytes per iv is user's responsibility */
-    }
-
-    U32TO8_LITTLE(cipher + 0, x0);
-    U32TO8_LITTLE(cipher + 4, x1);
-    U32TO8_LITTLE(cipher + 8, x2);
-    U32TO8_LITTLE(cipher + 12, x3);
-    U32TO8_LITTLE(cipher + 16, x4);
-    U32TO8_LITTLE(cipher + 20, x5);
-    U32TO8_LITTLE(cipher + 24, x6);
-    U32TO8_LITTLE(cipher + 28, x7);
-    U32TO8_LITTLE(cipher + 32, x8);
-    U32TO8_LITTLE(cipher + 36, x9);
-    U32TO8_LITTLE(cipher + 40, x10);
-    U32TO8_LITTLE(cipher + 44, x11);
-    U32TO8_LITTLE(cipher + 48, x12);
-    U32TO8_LITTLE(cipher + 52, x13);
-    U32TO8_LITTLE(cipher + 56, x14);
-    U32TO8_LITTLE(cipher + 60, x15);
-
-    if (length <= 64)
-    {
-      if (length < 64)
-      {
-        memcpy(ctarget, cipher, length);
-      }
-      return;
-    }
-    length -= 64;
-    cipher += 64;
-    data = (uint8_t *)data + 64;
+    QUARTERROUND(x0, x4, x8, x12)
+    QUARTERROUND(x1, x5, x9, x13)
+    QUARTERROUND(x2, x6, x10, x14)
+    QUARTERROUND(x3, x7, x11, x15)
+    QUARTERROUND(x0, x5, x10, x15)
+    QUARTERROUND(x1, x6, x11, x12)
+    QUARTERROUND(x2, x7, x8, x13)
+    QUARTERROUND(x3, x4, x9, x14)
   }
+
+  x0 = PLUS(x0, j0); x1 = PLUS(x1, j1); x2 = PLUS(x2, j2); x3 = PLUS(x3, j3);
+  x4 = PLUS(x4, j4); x5 = PLUS(x5, j5); x6 = PLUS(x6, j6); x7 = PLUS(x7, j7);
+  x8 = PLUS(x8, j8); x9 = PLUS(x9, j9); x10 = PLUS(x10, j10); x11 = PLUS(x11, j11);
+  x12 = PLUS(x12, j12); x13 = PLUS(x13, j13); x14 = PLUS(x14, j14); x15 = PLUS(x15, j15);
+
+  U32TO8_LITTLE(out + 0, x0); U32TO8_LITTLE(out + 4, x1); U32TO8_LITTLE(out + 8, x2); U32TO8_LITTLE(out + 12, x3);
+  U32TO8_LITTLE(out + 16, x4); U32TO8_LITTLE(out + 20, x5); U32TO8_LITTLE(out + 24, x6); U32TO8_LITTLE(out + 28, x7);
+  U32TO8_LITTLE(out + 32, x8); U32TO8_LITTLE(out + 36, x9); U32TO8_LITTLE(out + 40, x10); U32TO8_LITTLE(out + 44, x11);
+  U32TO8_LITTLE(out + 48, x12); U32TO8_LITTLE(out + 52, x13); U32TO8_LITTLE(out + 56, x14); U32TO8_LITTLE(out + 60, x15);
+}
+
+/* Convenience wrapper for ChaCha8 */
+void chacha8_block(uint8_t out[64],
+                   const uint8_t key[32],
+                   const uint8_t nonce[8],
+                   uint64_t counter)
+{
+  chacha_block(out, key, nonce, counter, 8);
+}
+
+/* Stream cipher function with modern signature */
+void chacha8_xor(const uint8_t *data, size_t length, const uint8_t *key, const uint8_t *iv, uint8_t *cipher)
+{
+  uint8_t keystream[64];
+  uint8_t tmp[64];
+  uint64_t counter = 0;
+  size_t remaining = length;
+
+  if (!length)
+    return;
+
+  do {
+    size_t block_size = (remaining < 64) ? remaining : 64;
+    
+    /* Generate keystream block */
+    chacha_block(keystream, key, iv, counter, 8);
+    
+    /* XOR with data */
+    if (block_size == 64)
+    {
+      /* Full block - XOR directly */
+      for (size_t i = 0; i < 64; i++)
+      {
+        cipher[i] = data[i] ^ keystream[i];
+      }
+    }
+    else
+    {
+      /* Partial block - copy to temp buffer first */
+      memcpy(tmp, data, block_size);
+      for (size_t i = 0; i < block_size; i++)
+      {
+        cipher[i] = tmp[i] ^ keystream[i];
+      }
+    }
+    
+    counter++;
+    remaining -= block_size;
+    data += block_size;
+    cipher += block_size;
+  } while (remaining > 0);
+}
+
+/* Legacy function for backward compatibility */
+void chacha8(const void *data, size_t length, const uint8_t *key, const uint8_t *iv, char *cipher)
+{
+  chacha8_xor((const uint8_t *)data, length, key, iv, (uint8_t *)cipher);
 }
