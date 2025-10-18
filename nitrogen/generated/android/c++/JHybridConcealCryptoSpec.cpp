@@ -66,5 +66,15 @@ namespace margelo::nitro::concealcrypto {
     auto __result = method(_javaPart, JArrayBuffer::wrap(key), JArrayBuffer::wrap(data));
     return __result->cthis()->getArrayBuffer();
   }
+  std::string JHybridConcealCryptoSpec::random(double bits) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(double /* bits */)>("random");
+    auto __result = method(_javaPart, bits);
+    return __result->toStdString();
+  }
+  std::shared_ptr<ArrayBuffer> JHybridConcealCryptoSpec::randomBytes(double bytes) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JArrayBuffer::javaobject>(double /* bytes */)>("randomBytes");
+    auto __result = method(_javaPart, bytes);
+    return __result->cthis()->getArrayBuffer();
+  }
 
 } // namespace margelo::nitro::concealcrypto

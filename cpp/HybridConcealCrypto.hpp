@@ -29,6 +29,8 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
                                                        const std::shared_ptr<NitroModules::ArrayBuffer>& iv) override;
   std::shared_ptr<NitroModules::ArrayBuffer> hmacSha1(const std::shared_ptr<NitroModules::ArrayBuffer>& key,
                                                        const std::shared_ptr<NitroModules::ArrayBuffer>& data) override;
+  std::string random(int bits) override;
+  std::shared_ptr<NitroModules::ArrayBuffer> randomBytes(int bytes) override;
 };
 
 }  // namespace margelo::nitro::concealcrypto

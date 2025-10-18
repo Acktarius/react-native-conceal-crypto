@@ -8,6 +8,7 @@
  */
 #include "HybridConcealCrypto.hpp"
 #include "chacha.h"
+#include "mn_random.h"
 #include <sstream>
 #include <iomanip>
 #include <stdexcept>
@@ -124,4 +125,19 @@ std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::hmacSha1(
   const std::shared_ptr<NitroModules::ArrayBuffer>& data
 ) {
   return Hmac::hmacSha1(key, data);
+}
+
+/**
+ * Clean JavaScript API for mnemonic-style random generation
+ */
+std::string HybridConcealCrypto::random(int bits) {
+  return ::mn_random(bits);
+}
+
+/**
+ * Clean JavaScript API for random bytes generation
+ */
+std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::randomBytes(int bytes) {
+  std::vector<uint8_t> random_data = ::mn_random_bytes(bytes);
+  return std::make_shared<NitroModules::ArrayBuffer>(random_data.data(), random_data.size());
 }

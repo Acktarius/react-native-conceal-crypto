@@ -102,6 +102,22 @@ namespace margelo::nitro::concealcrypto {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::string random(double bits) override {
+      auto __result = _swiftPart.random(std::forward<decltype(bits)>(bits));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<ArrayBuffer> randomBytes(double bytes) override {
+      auto __result = _swiftPart.randomBytes(std::forward<decltype(bytes)>(bytes));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
 
   private:
     ConcealCrypto::HybridConcealCryptoSpec_cxx _swiftPart;

@@ -7,4 +7,6 @@ export interface ConcealCrypto extends HybridObject<{ ios: 'swift'; android: 'ko
   chacha8(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer): ArrayBuffer;
   chacha12(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer): ArrayBuffer;
   hmacSha1(key: ArrayBuffer, data: ArrayBuffer): ArrayBuffer;
+  random(bits: number): string;
+  randomBytes(bytes: number): ArrayBuffer;
 }

@@ -58,6 +58,8 @@ namespace margelo::nitro::concealcrypto {
     std::shared_ptr<ArrayBuffer> chacha8(const std::shared_ptr<ArrayBuffer>& input, const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& iv) override;
     std::shared_ptr<ArrayBuffer> chacha12(const std::shared_ptr<ArrayBuffer>& input, const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& iv) override;
     std::shared_ptr<ArrayBuffer> hmacSha1(const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& data) override;
+    std::string random(double bits) override;
+    std::shared_ptr<ArrayBuffer> randomBytes(double bytes) override;
 
   private:
     friend HybridBase;

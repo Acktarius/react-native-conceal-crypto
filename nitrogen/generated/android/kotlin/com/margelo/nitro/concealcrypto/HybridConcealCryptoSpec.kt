@@ -59,6 +59,14 @@ abstract class HybridConcealCryptoSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun hmacSha1(key: ArrayBuffer, data: ArrayBuffer): ArrayBuffer
+  
+  @DoNotStrip
+  @Keep
+  abstract fun random(bits: Double): String
+  
+  @DoNotStrip
+  @Keep
+  abstract fun randomBytes(bytes: Double): ArrayBuffer
 
   private external fun initHybrid(): HybridData
 

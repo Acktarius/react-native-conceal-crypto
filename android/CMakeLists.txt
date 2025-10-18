@@ -17,6 +17,7 @@ add_library(${PACKAGE_NAME} SHARED
   ../cpp/Hmac.cpp
   ../cpp/chacha8.c
   ../cpp/chacha12.c
+  ../cpp/mn_random.cpp
 )
 
 #---------------------------------------------
@@ -39,9 +40,44 @@ include(${CMAKE_SOURCE_DIR}/../nitrogen/generated/android/ConcealCrypto+autolink
 find_library(LOG_LIB log)
 
 #---------------------------------------------
-# Optional: OpenSSL example (if used later)
-# find_package(openssl REQUIRED CONFIG)
+# Try to find libsodium using modern CMake approaches
 #---------------------------------------------
+
+# Option 1: Try system-installed libsodium first
+find_package(Sodium QUIET)
+if(Sodium_FOUND)
+    target_link_libraries(${PACKAGE_NAME} PRIVATE sodium)
+    target_compile_definitions(${PACKAGE_NAME} PRIVATE HAVE_SODIUM_H=1)
+    message(STATUS "libsodium found (system) - using OS CSPRNG")
+else()
+    # Option 2: Try pkg-config as fallback
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(LIBSODIUM libsodium)
+        if(LIBSODIUM_FOUND)
+            target_link_libraries(${PACKAGE_NAME} PRIVATE ${LIBSODIUM_LIBRARIES})
+            target_include_directories(${PACKAGE_NAME} PRIVATE ${LIBSODIUM_INCLUDE_DIRS})
+            target_compile_definitions(${PACKAGE_NAME} PRIVATE HAVE_SODIUM_H=1)
+            message(STATUS "libsodium found (pkg-config) - using OS CSPRNG")
+        else()
+            message(STATUS "libsodium not found - using hardware RNG fallback")
+        endif()
+    else()
+        message(STATUS "pkg-config not found - using hardware RNG fallback")
+    endif()
+endif()
+
+# Option 3: FetchContent approach (commented out - uncomment if needed)
+# include(FetchContent)
+# FetchContent_Declare(
+#   Sodium
+#   GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
+#   GIT_TAG e5b985ad0dd235d8c4307ea3a385b45e76c74c6a
+# )
+# FetchContent_MakeAvailable(Sodium)
+# target_link_libraries(${PACKAGE_NAME} PRIVATE sodium)
+# target_include_directories(${PACKAGE_NAME} PRIVATE ${SODIUM_INCLUDE_DIRS})
+# target_compile_definitions(${PACKAGE_NAME} PRIVATE HAVE_SODIUM_H=1)
 
 #---------------------------------------------
 # 5. Link everything
@@ -50,7 +86,7 @@ target_link_libraries(
   ${PACKAGE_NAME}
   ${LOG_LIB}        # Android logcat logger
   android           # JNI core
-  # fbjni::fbjni     # Only if autolinking didn’t add it
+  # fbjni::fbjni     # Only if autolinking didn't add it
   # ReactAndroid::jsi # Usually auto‑linked by Nitro
   # openssl::crypto  # Uncomment if OpenSSL added
 )
