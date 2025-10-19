@@ -26,22 +26,21 @@ public:
    * @param data The message data as ArrayBuffer
    * @return HMAC-SHA1 result as ArrayBuffer (20 bytes)
    */
-  static std::shared_ptr<NitroModules::ArrayBuffer> hmacSha1(
-    const std::shared_ptr<NitroModules::ArrayBuffer>& key,
-    const std::shared_ptr<NitroModules::ArrayBuffer>& data
+  static std::shared_ptr<ArrayBuffer> hmacSha1(
+    const std::shared_ptr<ArrayBuffer>& key,
+    const std::shared_ptr<ArrayBuffer>& data
   );
 
 private:
-  // Performance optimization: pre-allocated buffers to reduce heap churn
-  static thread_local std::vector<uint8_t> scratchBuffer;
-  static constexpr size_t MAX_SCRATCH_SIZE = 1024; // Reasonable upper bound for most use cases
-  
-  /**
-   * Get or resize scratch buffer for reuse
-   * @param requiredSize Minimum size needed
-   * @return Reference to scratch buffer
-   */
-  static std::vector<uint8_t>& getScratchBuffer(size_t requiredSize);
+  // Performance optimization: pre-allocated thread-local buffers to reduce heap allocations
+  // Since HMAC is called frequently (e.g., TOTP every 30s, transaction signing), this reduces overhead
+  struct HmacBuffers {
+    std::vector<uint8_t> innerPadded;
+    std::vector<uint8_t> outerPadded;
+    std::vector<uint8_t> innerData;
+    std::vector<uint8_t> outerData;
+  };
+  static thread_local HmacBuffers buffers;
 
 private:
   /**
@@ -64,14 +63,14 @@ private:
    * @param buffer Input ArrayBuffer
    * @return Vector of bytes
    */
-  static std::vector<uint8_t> arrayBufferToVector(const std::shared_ptr<NitroModules::ArrayBuffer>& buffer);
+  static std::vector<uint8_t> arrayBufferToVector(const std::shared_ptr<ArrayBuffer>& buffer);
 
   /**
    * Convert vector of bytes to ArrayBuffer
    * @param data Vector of bytes
    * @return ArrayBuffer
    */
-  static std::shared_ptr<NitroModules::ArrayBuffer> vectorToArrayBuffer(const std::vector<uint8_t>& data);
+  static std::shared_ptr<ArrayBuffer> vectorToArrayBuffer(const std::vector<uint8_t>& data);
 };
 
 } // namespace margelo::nitro::concealcrypto

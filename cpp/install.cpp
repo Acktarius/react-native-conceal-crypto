@@ -7,7 +7,7 @@
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.
  */
 #include <NitroModules/HybridObjectRegistry.hpp>
-#include "HybridConcealCryptoSpec.hpp"
+#include "HybridConcealCrypto.hpp"
 
 using namespace margelo::nitro::concealcrypto;
 

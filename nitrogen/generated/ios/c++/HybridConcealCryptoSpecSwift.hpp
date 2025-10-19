@@ -20,6 +20,7 @@ namespace NitroModules { class ArrayBufferHolder; }
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
 #include <string>
+#include <optional>
 
 #include "ConcealCrypto-Swift-Cxx-Umbrella.hpp"
 
@@ -112,6 +113,22 @@ namespace margelo::nitro::concealcrypto {
     }
     inline std::shared_ptr<ArrayBuffer> randomBytes(double bytes) override {
       auto __result = _swiftPart.randomBytes(std::forward<decltype(bytes)>(bytes));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<ArrayBuffer> secretbox(const std::shared_ptr<ArrayBuffer>& message, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) override {
+      auto __result = _swiftPart.secretbox(ArrayBufferHolder(message), ArrayBufferHolder(nonce), ArrayBufferHolder(key));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(const std::shared_ptr<ArrayBuffer>& ciphertext, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) override {
+      auto __result = _swiftPart.secretboxOpen(ArrayBufferHolder(ciphertext), ArrayBufferHolder(nonce), ArrayBufferHolder(key));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

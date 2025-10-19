@@ -7,6 +7,7 @@ Modified and modularized for ChaCha12 integration – Acktarius 2025
 */
 
 #include "chacha.h"
+#include <string.h>
 
 /* Convenience wrapper for ChaCha12 */
 void chacha12_block(uint8_t out[64],

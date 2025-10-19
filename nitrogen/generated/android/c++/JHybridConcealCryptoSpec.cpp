@@ -14,6 +14,7 @@ namespace NitroModules { class ArrayBuffer; }
 #include <NitroModules/JArrayBuffer.hpp>
 #include <NitroModules/JUnit.hpp>
 #include <string>
+#include <optional>
 
 namespace margelo::nitro::concealcrypto {
 
@@ -75,6 +76,16 @@ namespace margelo::nitro::concealcrypto {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JArrayBuffer::javaobject>(double /* bytes */)>("randomBytes");
     auto __result = method(_javaPart, bytes);
     return __result->cthis()->getArrayBuffer();
+  }
+  std::shared_ptr<ArrayBuffer> JHybridConcealCryptoSpec::secretbox(const std::shared_ptr<ArrayBuffer>& message, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JArrayBuffer::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* message */, jni::alias_ref<JArrayBuffer::javaobject> /* nonce */, jni::alias_ref<JArrayBuffer::javaobject> /* key */)>("secretbox");
+    auto __result = method(_javaPart, JArrayBuffer::wrap(message), JArrayBuffer::wrap(nonce), JArrayBuffer::wrap(key));
+    return __result->cthis()->getArrayBuffer();
+  }
+  std::optional<std::shared_ptr<ArrayBuffer>> JHybridConcealCryptoSpec::secretboxOpen(const std::shared_ptr<ArrayBuffer>& ciphertext, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JArrayBuffer::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* ciphertext */, jni::alias_ref<JArrayBuffer::javaobject> /* nonce */, jni::alias_ref<JArrayBuffer::javaobject> /* key */)>("secretboxOpen");
+    auto __result = method(_javaPart, JArrayBuffer::wrap(ciphertext), JArrayBuffer::wrap(nonce), JArrayBuffer::wrap(key));
+    return __result != nullptr ? std::make_optional(__result->cthis()->getArrayBuffer()) : std::nullopt;
   }
 
 } // namespace margelo::nitro::concealcrypto

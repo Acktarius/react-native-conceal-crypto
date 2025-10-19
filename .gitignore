@@ -3,7 +3,5 @@ dist/
 build/
 *.log
 coverage/
-example/node_modules/
-.example/android/.gradle
-example/android/build/
-example/android/app/build/
+android/.cxx/
+*.tgz

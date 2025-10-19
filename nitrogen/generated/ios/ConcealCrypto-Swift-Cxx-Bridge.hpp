@@ -8,6 +8,8 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `ArrayBufferHolder` to properly resolve imports.
+namespace NitroModules { class ArrayBufferHolder; }
 // Forward declaration of `ArrayBuffer` to properly resolve imports.
 namespace NitroModules { class ArrayBuffer; }
 // Forward declaration of `HybridConcealCryptoSpec` to properly resolve imports.
@@ -20,9 +22,11 @@ namespace ConcealCrypto { class HybridConcealCryptoSpec_cxx; }
 // Include C++ defined types
 #include "HybridConcealCryptoSpec.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
+#include <NitroModules/ArrayBufferHolder.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <memory>
+#include <optional>
 #include <string>
 
 /**
@@ -31,6 +35,21 @@ namespace ConcealCrypto { class HybridConcealCryptoSpec_cxx; }
  */
 namespace margelo::nitro::concealcrypto::bridge::swift {
 
+  // pragma MARK: std::optional<std::shared_ptr<ArrayBuffer>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<ArrayBuffer>>`.
+   */
+  using std__optional_std__shared_ptr_ArrayBuffer__ = std::optional<std::shared_ptr<ArrayBuffer>>;
+  inline std::optional<std::shared_ptr<ArrayBuffer>> create_std__optional_std__shared_ptr_ArrayBuffer__(const std::shared_ptr<ArrayBuffer>& value) noexcept {
+    return std::optional<std::shared_ptr<ArrayBuffer>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_ArrayBuffer__(const std::optional<std::shared_ptr<ArrayBuffer>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<ArrayBuffer> get_std__optional_std__shared_ptr_ArrayBuffer__(const std::optional<std::shared_ptr<ArrayBuffer>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: std::shared_ptr<HybridConcealCryptoSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridConcealCryptoSpec>`.
@@ -59,6 +78,15 @@ namespace margelo::nitro::concealcrypto::bridge::swift {
   }
   inline Result_std__string_ create_Result_std__string_(const std::exception_ptr& error) noexcept {
     return Result<std::string>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::optional<std::shared_ptr<ArrayBuffer>>>
+  using Result_std__optional_std__shared_ptr_ArrayBuffer___ = Result<std::optional<std::shared_ptr<ArrayBuffer>>>;
+  inline Result_std__optional_std__shared_ptr_ArrayBuffer___ create_Result_std__optional_std__shared_ptr_ArrayBuffer___(const std::optional<std::shared_ptr<ArrayBuffer>>& value) noexcept {
+    return Result<std::optional<std::shared_ptr<ArrayBuffer>>>::withValue(value);
+  }
+  inline Result_std__optional_std__shared_ptr_ArrayBuffer___ create_Result_std__optional_std__shared_ptr_ArrayBuffer___(const std::exception_ptr& error) noexcept {
+    return Result<std::optional<std::shared_ptr<ArrayBuffer>>>::withError(error);
   }
 
 } // namespace margelo::nitro::concealcrypto::bridge::swift

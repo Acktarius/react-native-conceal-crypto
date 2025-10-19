@@ -19,18 +19,24 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   HybridConcealCrypto();
 
   // Functions declared in your TypeScript Nitro spec
-  std::shared_ptr<NitroModules::ArrayBuffer> hextobin(const std::string& hex) override;
-  std::string bintohex(const std::shared_ptr<NitroModules::ArrayBuffer>& buffer) override;
-  std::shared_ptr<NitroModules::ArrayBuffer> chacha8(const std::shared_ptr<NitroModules::ArrayBuffer>& input,
-                                                      const std::shared_ptr<NitroModules::ArrayBuffer>& key,
-                                                      const std::shared_ptr<NitroModules::ArrayBuffer>& iv) override;
-  std::shared_ptr<NitroModules::ArrayBuffer> chacha12(const std::shared_ptr<NitroModules::ArrayBuffer>& input,
-                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& key,
-                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& iv) override;
-  std::shared_ptr<NitroModules::ArrayBuffer> hmacSha1(const std::shared_ptr<NitroModules::ArrayBuffer>& key,
-                                                       const std::shared_ptr<NitroModules::ArrayBuffer>& data) override;
-  std::string random(int bits) override;
-  std::shared_ptr<NitroModules::ArrayBuffer> randomBytes(int bytes) override;
+  std::shared_ptr<ArrayBuffer> hextobin(const std::string& hex) override;
+  std::string bintohex(const std::shared_ptr<ArrayBuffer>& buffer) override;
+  std::shared_ptr<ArrayBuffer> chacha8(const std::shared_ptr<ArrayBuffer>& input,
+                                       const std::shared_ptr<ArrayBuffer>& key,
+                                       const std::shared_ptr<ArrayBuffer>& iv) override;
+  std::shared_ptr<ArrayBuffer> chacha12(const std::shared_ptr<ArrayBuffer>& input,
+                                        const std::shared_ptr<ArrayBuffer>& key,
+                                        const std::shared_ptr<ArrayBuffer>& iv) override;
+  std::shared_ptr<ArrayBuffer> hmacSha1(const std::shared_ptr<ArrayBuffer>& key,
+                                        const std::shared_ptr<ArrayBuffer>& data) override;
+  std::string random(double bits) override;
+  std::shared_ptr<ArrayBuffer> randomBytes(double bytes) override;
+  std::shared_ptr<ArrayBuffer> secretbox(const std::shared_ptr<ArrayBuffer>& message,
+                                         const std::shared_ptr<ArrayBuffer>& nonce,
+                                         const std::shared_ptr<ArrayBuffer>& key) override;
+  std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(const std::shared_ptr<ArrayBuffer>& ciphertext,
+                                                             const std::shared_ptr<ArrayBuffer>& nonce,
+                                                             const std::shared_ptr<ArrayBuffer>& key) override;
 };
 
 }  // namespace margelo::nitro::concealcrypto

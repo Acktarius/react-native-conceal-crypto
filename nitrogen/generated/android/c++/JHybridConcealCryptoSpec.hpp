@@ -60,6 +60,8 @@ namespace margelo::nitro::concealcrypto {
     std::shared_ptr<ArrayBuffer> hmacSha1(const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& data) override;
     std::string random(double bits) override;
     std::shared_ptr<ArrayBuffer> randomBytes(double bytes) override;
+    std::shared_ptr<ArrayBuffer> secretbox(const std::shared_ptr<ArrayBuffer>& message, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) override;
+    std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(const std::shared_ptr<ArrayBuffer>& ciphertext, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) override;
 
   private:
     friend HybridBase;

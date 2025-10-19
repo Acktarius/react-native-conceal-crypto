@@ -6,15 +6,14 @@
   "react-native": "src/index.ts",
   "types": "src/index.d.ts",
   "scripts": {
-    "build": "npx nitrogen",
+    "nitrogen:init": "npx nitrogen && node scripts/fix-visibility.js",
     "clean": "npx nitrogen clean && cd android && ./gradlew clean",
     "test": "jest",
-    "lint": "eslint src --ext .ts,.tsx",
-    "format": "prettier --write \"src/**/*.{ts,tsx,js,json}\"",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check --write",
     "check:cpp": "clang-format --dry-run --Werror cpp/**/*.cpp nitrogen/generated/**/*.cpp && echo Check complete!",
-    "format:cpp": "clang-format -i 'cpp/**/*.{cpp,hpp,c,h}' 'nitrogen/generated/**/*.{cpp,hpp,h}'",
-    "open:ios": "xed example/ios",
-    "open:android": "open -a \"Android Studio\" example/android"
+    "format:cpp": "clang-format -i 'cpp/**/*.{cpp,hpp,c,h}' 'nitrogen/generated/**/*.{cpp,hpp,h}'"
   },
   "keywords": [
     "react-native",
@@ -22,8 +21,7 @@
     "jsi",
     "conceal",
     "crypto",
-    "c++",
-    "expo"
+    "c++"
   ],
   "repository": {
     "type": "git",
@@ -36,25 +34,22 @@
   "author": "Acktarius <acktarius@protonmail.com> (https://github.com/Acktarius)",
   "homepage": "https://github.com/Acktarius/react-native-conceal-crypto#readme",
   "devDependencies": {
-    "@react-native-community/cli": "latest",
-    "@types/react": "~19.1.0",
-    "@typescript-eslint/eslint-plugin": "^8.46.1",
-    "@typescript-eslint/parser": "^8.46.1",
+    "@biomejs/biome": "^2.2.6",
+    "@react-native-community/cli": "^13.6.0",
+    "@types/react": "^19.1.0",
     "clang-format": "^1.8.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-native": "^5.0.0",
-    "expo": "^54.0.12",
-    "expo-module-scripts": "^5.0.7",
     "nitrogen": "^0.30.2",
-    "react-native": "0.81.4",
+    "react-native": "0.82.0",
     "react-native-nitro-modules": "^0.30.2",
     "typescript": "^5.5.0"
   },
   "peerDependencies": {
-    "expo": "*",
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-nitro-modules": "^0.30.2"
   },
   "files": [
     "cpp/",
@@ -63,10 +58,16 @@
     "ios/",
     "nitrogen/generated/",
     "package.json",
-    "README.md"
+    "README.md",
+    "react-native.config.js",
+    ".npmrc"
   ],
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
+  },
+  "overrides": {
+    "ip": "^2.0.1",
+    "tmp": "^0.2.3"
   }
 }

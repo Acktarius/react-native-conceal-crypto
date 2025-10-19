@@ -2,8 +2,12 @@ cmake_minimum_required(VERSION 3.10.2)
 project(ConcealCrypto)
 
 # Compiler setup
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
+
+set(BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
+
 
 # Library name must match androidCxxLibName in nitro.json
 set(PACKAGE_NAME ConcealCrypto)
@@ -33,7 +37,6 @@ include_directories(
 # 3. Include Nitrogen‑generated autolinking setup
 #---------------------------------------------
 include(${CMAKE_SOURCE_DIR}/../nitrogen/generated/android/ConcealCrypto+autolinking.cmake)
-
 #---------------------------------------------
 # 4. Find system libraries
 #---------------------------------------------
@@ -67,17 +70,18 @@ else()
     endif()
 endif()
 
-# Option 3: FetchContent approach (commented out - uncomment if needed)
-# include(FetchContent)
-# FetchContent_Declare(
-#   Sodium
-#   GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
-#   GIT_TAG e5b985ad0dd235d8c4307ea3a385b45e76c74c6a
-# )
-# FetchContent_MakeAvailable(Sodium)
-# target_link_libraries(${PACKAGE_NAME} PRIVATE sodium)
-# target_include_directories(${PACKAGE_NAME} PRIVATE ${SODIUM_INCLUDE_DIRS})
-# target_compile_definitions(${PACKAGE_NAME} PRIVATE HAVE_SODIUM_H=1)
+# Option 3: FetchContent approach (for Android builds without system libsodium)
+include(FetchContent)
+FetchContent_Declare(
+  Sodium
+  GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
+  GIT_TAG e5b985ad0dd235d8c4307ea3a385b45e76c74c6a
+)
+FetchContent_MakeAvailable(Sodium)
+# Use plain signature (no PRIVATE) to match autolinking.cmake
+target_link_libraries(${PACKAGE_NAME} sodium)
+target_include_directories(${PACKAGE_NAME} PRIVATE ${SODIUM_INCLUDE_DIRS})
+target_compile_definitions(${PACKAGE_NAME} PRIVATE HAVE_SODIUM_H=1)
 
 #---------------------------------------------
 # 5. Link everything

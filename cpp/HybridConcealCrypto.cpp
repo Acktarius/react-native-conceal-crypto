@@ -9,6 +9,7 @@
 #include "HybridConcealCrypto.hpp"
 #include "chacha.h"
 #include "mn_random.h"
+#include <sodium.h>
 #include <sstream>
 #include <iomanip>
 #include <stdexcept>
@@ -16,15 +17,18 @@
 using namespace margelo::nitro;
 using namespace margelo::nitro::concealcrypto;
 
+// TAG constant for HybridObject registration
+constexpr auto TAG = "ConcealCrypto";
+
 /**
- * Constructor — can init internal states or keys if needed.
+ * Constructor — must call HybridObject(TAG) base constructor.
  */
-HybridConcealCrypto::HybridConcealCrypto() : HybridConcealCryptoSpec() {}
+HybridConcealCrypto::HybridConcealCrypto() : HybridObject(TAG) {}
 
 /**
  * Converts a hex string (e.g. "deadbeef") into binary bytes.
  */
-std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::hextobin(const std::string& hex) {
+std::shared_ptr<ArrayBuffer> HybridConcealCrypto::hextobin(const std::string& hex) {
   if (hex.size() % 2 != 0)
     throw std::invalid_argument("Hex string must have even length");
 
@@ -37,13 +41,13 @@ std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::hextobin(const s
     binary.push_back(static_cast<uint8_t>(byte));
   }
   
-  return std::make_shared<NitroModules::ArrayBuffer>(binary.data(), binary.size());
+  return ArrayBuffer::copy(binary);
 }
 
 /**
  * Converts binary bytes into a hex string.
  */
-std::string HybridConcealCrypto::bintohex(const std::shared_ptr<NitroModules::ArrayBuffer>& buffer) {
+std::string HybridConcealCrypto::bintohex(const std::shared_ptr<ArrayBuffer>& buffer) {
   if (!buffer) throw std::invalid_argument("Buffer must not be null");
   
   std::ostringstream oss;
@@ -60,10 +64,10 @@ std::string HybridConcealCrypto::bintohex(const std::shared_ptr<NitroModules::Ar
 /**
  * ChaCha8 encryption.
  */
-std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::chacha8(
-  const std::shared_ptr<NitroModules::ArrayBuffer>& input,
-  const std::shared_ptr<NitroModules::ArrayBuffer>& key,
-  const std::shared_ptr<NitroModules::ArrayBuffer>& iv
+std::shared_ptr<ArrayBuffer> HybridConcealCrypto::chacha8(
+  const std::shared_ptr<ArrayBuffer>& input,
+  const std::shared_ptr<ArrayBuffer>& key,
+  const std::shared_ptr<ArrayBuffer>& iv
 ) {
   if (!input || !key || !iv) 
     throw std::invalid_argument("Input, key and IV must not be null");
@@ -84,16 +88,16 @@ std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::chacha8(
     output.data()                                 // output
   );
 
-  return std::make_shared<NitroModules::ArrayBuffer>(output.data(), output.size());
+  return ArrayBuffer::copy(output);
 }
 
 /**
  * Real ChaCha12 encryption using Conceal Core implementation.
  */
-std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::chacha12(
-  const std::shared_ptr<NitroModules::ArrayBuffer>& input,
-  const std::shared_ptr<NitroModules::ArrayBuffer>& key,
-  const std::shared_ptr<NitroModules::ArrayBuffer>& iv
+std::shared_ptr<ArrayBuffer> HybridConcealCrypto::chacha12(
+  const std::shared_ptr<ArrayBuffer>& input,
+  const std::shared_ptr<ArrayBuffer>& key,
+  const std::shared_ptr<ArrayBuffer>& iv
 ) {
   if (!input || !key || !iv) 
     throw std::invalid_argument("Input, key and IV must not be null");
@@ -114,15 +118,15 @@ std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::chacha12(
     output.data()                                 // output
   );
 
-  return std::make_shared<NitroModules::ArrayBuffer>(output.data(), output.size());
+  return ArrayBuffer::copy(output);
 }
 
 /**
  * HMAC-SHA1 implementation for TOTP computation
  */
-std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::hmacSha1(
-  const std::shared_ptr<NitroModules::ArrayBuffer>& key,
-  const std::shared_ptr<NitroModules::ArrayBuffer>& data
+std::shared_ptr<ArrayBuffer> HybridConcealCrypto::hmacSha1(
+  const std::shared_ptr<ArrayBuffer>& key,
+  const std::shared_ptr<ArrayBuffer>& data
 ) {
   return Hmac::hmacSha1(key, data);
 }
@@ -130,14 +134,81 @@ std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::hmacSha1(
 /**
  * Clean JavaScript API for mnemonic-style random generation
  */
-std::string HybridConcealCrypto::random(int bits) {
+std::string HybridConcealCrypto::random(double bits) {
   return ::mn_random(bits);
 }
 
 /**
  * Clean JavaScript API for random bytes generation
  */
-std::shared_ptr<NitroModules::ArrayBuffer> HybridConcealCrypto::randomBytes(int bytes) {
+std::shared_ptr<ArrayBuffer> HybridConcealCrypto::randomBytes(double bytes) {
   std::vector<uint8_t> random_data = ::mn_random_bytes(bytes);
-  return std::make_shared<NitroModules::ArrayBuffer>(random_data.data(), random_data.size());
+  return ArrayBuffer::copy(random_data);
+}
+
+/**
+ * libsodium secretbox encryption (authenticated encryption)
+ */
+std::shared_ptr<ArrayBuffer> HybridConcealCrypto::secretbox(
+  const std::shared_ptr<ArrayBuffer>& message,
+  const std::shared_ptr<ArrayBuffer>& nonce,
+  const std::shared_ptr<ArrayBuffer>& key
+) {
+  if (!message || !nonce || !key) 
+    throw std::invalid_argument("Message, nonce and key must not be null");
+  if (nonce->size() != crypto_secretbox_NONCEBYTES)
+    throw std::invalid_argument("Invalid nonce size");
+  if (key->size() != crypto_secretbox_KEYBYTES)
+    throw std::invalid_argument("Invalid key size");
+
+  size_t cipher_len = message->size() + crypto_secretbox_MACBYTES;
+  std::vector<uint8_t> ciphertext(cipher_len);
+
+  int result = crypto_secretbox_easy(
+    ciphertext.data(),
+    static_cast<const unsigned char*>(message->data()),
+    message->size(),
+    static_cast<const unsigned char*>(nonce->data()),
+    static_cast<const unsigned char*>(key->data())
+  );
+
+  if (result != 0)
+    throw std::runtime_error("Secretbox encryption failed");
+
+  return ArrayBuffer::copy(ciphertext);
+}
+
+/**
+ * libsodium secretbox decryption (authenticated decryption)
+ * Returns std::nullopt if authentication/decryption fails
+ */
+std::optional<std::shared_ptr<ArrayBuffer>> HybridConcealCrypto::secretboxOpen(
+  const std::shared_ptr<ArrayBuffer>& ciphertext,
+  const std::shared_ptr<ArrayBuffer>& nonce,
+  const std::shared_ptr<ArrayBuffer>& key
+) {
+  if (!ciphertext || !nonce || !key) 
+    throw std::invalid_argument("Ciphertext, nonce and key must not be null");
+  if (ciphertext->size() < crypto_secretbox_MACBYTES)
+    throw std::invalid_argument("Ciphertext too short");
+  if (nonce->size() != crypto_secretbox_NONCEBYTES)
+    throw std::invalid_argument("Invalid nonce size");
+  if (key->size() != crypto_secretbox_KEYBYTES)
+    throw std::invalid_argument("Invalid key size");
+
+  size_t message_len = ciphertext->size() - crypto_secretbox_MACBYTES;
+  std::vector<uint8_t> message(message_len);
+
+  int result = crypto_secretbox_open_easy(
+    message.data(),
+    static_cast<const unsigned char*>(ciphertext->data()),
+    ciphertext->size(),
+    static_cast<const unsigned char*>(nonce->data()),
+    static_cast<const unsigned char*>(key->data())
+  );
+
+  if (result != 0)
+    return std::nullopt; // Authentication failed
+
+  return ArrayBuffer::copy(message);
 }

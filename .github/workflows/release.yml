@@ -1,0 +1,74 @@
+name: Release Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Initialize Nitrogen bindings
+      run: npm run nitrogen:init
+      
+    - name: Build package
+      run: npm pack
+      
+    - name: Get package info
+      id: package-info
+      run: |
+        PACKAGE_NAME=$(node -p "require('./package.json').name")
+        PACKAGE_VERSION=$(node -p "require('./package.json').version")
+        echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+        echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+        echo "filename=${PACKAGE_NAME}-${PACKAGE_VERSION}.tgz" >> $GITHUB_OUTPUT
+        
+    - name: List files for debugging
+      run: ls -la *.tgz
+      
+    - name: Create Release
+      id: create-release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ steps.package-info.outputs.version }}
+        body: |
+          ## react-native-conceal-crypto v${{ steps.package-info.outputs.version }}
+          
+          ### Installation
+          ```bash
+          npm install ${{ steps.package-info.outputs.filename }}
+          ```
+          
+          ### Changes
+          See [CHANGELOG.md](./CHANGELOG.md) for detailed changes.
+        draft: false
+        prerelease: false
+        
+    - name: Upload Package Artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: ./${{ steps.package-info.outputs.filename }}
+        asset_name: ${{ steps.package-info.outputs.filename }}
+        asset_content_type: application/gzip

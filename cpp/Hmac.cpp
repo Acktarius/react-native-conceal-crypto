@@ -12,20 +12,12 @@
 
 namespace margelo::nitro::concealcrypto {
 
-// Thread-local scratch buffer for performance optimization
-thread_local std::vector<uint8_t> Hmac::scratchBuffer;
+// Initialize thread-local buffers
+thread_local Hmac::HmacBuffers Hmac::buffers;
 
-std::vector<uint8_t>& Hmac::getScratchBuffer(size_t requiredSize) {
-  if (scratchBuffer.capacity() < requiredSize) {
-    scratchBuffer.reserve(std::min(requiredSize, MAX_SCRATCH_SIZE));
-  }
-  scratchBuffer.resize(requiredSize);
-  return scratchBuffer;
-}
-
-std::shared_ptr<NitroModules::ArrayBuffer> Hmac::hmacSha1(
-    const std::shared_ptr<NitroModules::ArrayBuffer>& key,
-    const std::shared_ptr<NitroModules::ArrayBuffer>& data) {
+std::shared_ptr<ArrayBuffer> Hmac::hmacSha1(
+    const std::shared_ptr<ArrayBuffer>& key,
+    const std::shared_ptr<ArrayBuffer>& data) {
   
   if (!key || !data) {
     throw std::invalid_argument("Key and data must not be null");
@@ -47,28 +39,28 @@ std::shared_ptr<NitroModules::ArrayBuffer> Hmac::hmacSha1(
     keyBytes.resize(blockSize, 0);
   }
   
-  // Step 2: Create inner and outer padded keys using scratch buffer
-  auto& innerPadded = getScratchBuffer(blockSize);
-  auto& outerPadded = getScratchBuffer(blockSize);
+  // Step 2: Create inner and outer padded keys (reuse thread-local buffers for performance)
+  buffers.innerPadded.resize(blockSize);
+  buffers.outerPadded.resize(blockSize);
   
   for (size_t i = 0; i < blockSize; i++) {
-    innerPadded[i] = keyBytes[i] ^ 0x36;
-    outerPadded[i] = keyBytes[i] ^ 0x5c;
+    buffers.innerPadded[i] = keyBytes[i] ^ 0x36;
+    buffers.outerPadded[i] = keyBytes[i] ^ 0x5c;
   }
   
   // Step 3: Calculate inner hash: SHA1(innerPadded || data)
-  auto& innerData = getScratchBuffer(blockSize + dataBytes.size());
-  std::memcpy(innerData.data(), innerPadded.data(), blockSize);
-  std::memcpy(innerData.data() + blockSize, dataBytes.data(), dataBytes.size());
+  buffers.innerData.resize(blockSize + dataBytes.size());
+  std::memcpy(buffers.innerData.data(), buffers.innerPadded.data(), blockSize);
+  std::memcpy(buffers.innerData.data() + blockSize, dataBytes.data(), dataBytes.size());
   
-  std::vector<uint8_t> innerHash = sha1(innerData);
+  std::vector<uint8_t> innerHash = sha1(buffers.innerData);
   
   // Step 4: Calculate outer hash: SHA1(outerPadded || innerHash)
-  auto& outerData = getScratchBuffer(blockSize + innerHash.size());
-  std::memcpy(outerData.data(), outerPadded.data(), blockSize);
-  std::memcpy(outerData.data() + blockSize, innerHash.data(), innerHash.size());
+  buffers.outerData.resize(blockSize + innerHash.size());
+  std::memcpy(buffers.outerData.data(), buffers.outerPadded.data(), blockSize);
+  std::memcpy(buffers.outerData.data() + blockSize, innerHash.data(), innerHash.size());
   
-  return vectorToArrayBuffer(sha1(outerData));
+  return vectorToArrayBuffer(sha1(buffers.outerData));
 }
 
 std::vector<uint8_t> Hmac::sha1(const std::vector<uint8_t>& data) {
@@ -165,11 +157,11 @@ std::vector<uint8_t> Hmac::sha1(const std::vector<uint8_t>& data) {
   return result;
 }
 
-uint32_t Hmac::leftRotate(uint32_t value, int amount) noexcept {
+constexpr uint32_t Hmac::leftRotate(uint32_t value, int amount) noexcept {
   return (value << amount) | (value >> (32 - amount));
 }
 
-std::vector<uint8_t> Hmac::arrayBufferToVector(const std::shared_ptr<NitroModules::ArrayBuffer>& buffer) {
+std::vector<uint8_t> Hmac::arrayBufferToVector(const std::shared_ptr<ArrayBuffer>& buffer) {
   if (!buffer) {
     throw std::invalid_argument("Buffer must not be null");
   }
@@ -178,12 +170,12 @@ std::vector<uint8_t> Hmac::arrayBufferToVector(const std::shared_ptr<NitroModule
   return std::vector<uint8_t>(data, data + buffer->size());
 }
 
-std::shared_ptr<NitroModules::ArrayBuffer> Hmac::vectorToArrayBuffer(const std::vector<uint8_t>& data) {
+std::shared_ptr<ArrayBuffer> Hmac::vectorToArrayBuffer(const std::vector<uint8_t>& data) {
   if (data.empty()) {
-    return std::make_shared<NitroModules::ArrayBuffer>(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   }
   
-  return std::make_shared<NitroModules::ArrayBuffer>(data.data(), data.size());
+  return ArrayBuffer::copy(data);
 }
 
 } // namespace margelo::nitro::concealcrypto

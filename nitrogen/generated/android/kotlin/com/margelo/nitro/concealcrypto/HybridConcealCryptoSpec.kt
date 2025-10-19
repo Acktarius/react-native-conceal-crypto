@@ -67,6 +67,14 @@ abstract class HybridConcealCryptoSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun randomBytes(bytes: Double): ArrayBuffer
+  
+  @DoNotStrip
+  @Keep
+  abstract fun secretbox(message: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer): ArrayBuffer
+  
+  @DoNotStrip
+  @Keep
+  abstract fun secretboxOpen(ciphertext: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer): ArrayBuffer?
 
   private external fun initHybrid(): HybridData
 

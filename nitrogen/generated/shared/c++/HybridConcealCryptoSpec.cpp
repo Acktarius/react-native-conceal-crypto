@@ -21,6 +21,8 @@ namespace margelo::nitro::concealcrypto {
       prototype.registerHybridMethod("hmacSha1", &HybridConcealCryptoSpec::hmacSha1);
       prototype.registerHybridMethod("random", &HybridConcealCryptoSpec::random);
       prototype.registerHybridMethod("randomBytes", &HybridConcealCryptoSpec::randomBytes);
+      prototype.registerHybridMethod("secretbox", &HybridConcealCryptoSpec::secretbox);
+      prototype.registerHybridMethod("secretboxOpen", &HybridConcealCryptoSpec::secretboxOpen);
     });
   }
 

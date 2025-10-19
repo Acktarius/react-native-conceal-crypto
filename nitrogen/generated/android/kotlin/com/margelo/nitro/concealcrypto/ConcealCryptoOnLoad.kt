@@ -9,7 +9,7 @@ package com.margelo.nitro.concealcrypto
 
 import android.util.Log
 
-internal class ConcealCryptoOnLoad {
+public class ConcealCryptoOnLoad {
   companion object {
     private const val TAG = "ConcealCryptoOnLoad"
     private var didLoad = false

@@ -18,6 +18,7 @@ namespace NitroModules { class ArrayBuffer; }
 
 #include <NitroModules/ArrayBuffer.hpp>
 #include <string>
+#include <optional>
 
 namespace margelo::nitro::concealcrypto {
 
@@ -57,6 +58,8 @@ namespace margelo::nitro::concealcrypto {
       virtual std::shared_ptr<ArrayBuffer> hmacSha1(const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& data) = 0;
       virtual std::string random(double bits) = 0;
       virtual std::shared_ptr<ArrayBuffer> randomBytes(double bytes) = 0;
+      virtual std::shared_ptr<ArrayBuffer> secretbox(const std::shared_ptr<ArrayBuffer>& message, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) = 0;
+      virtual std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(const std::shared_ptr<ArrayBuffer>& ciphertext, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) = 0;
 
     protected:
       // Hybrid Setup

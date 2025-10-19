@@ -16,6 +16,7 @@
 #include <NitroModules/HybridObjectRegistry.hpp>
 
 #include "JHybridConcealCryptoSpec.hpp"
+#include "HybridConcealCrypto.hpp"
 
 namespace margelo::nitro::concealcrypto {
 
@@ -29,8 +30,21 @@ int initialize(JavaVM* vm) {
     margelo::nitro::concealcrypto::JHybridConcealCryptoSpec::registerNatives();
 
     // Register Nitro Hybrid Objects
-    
+    HybridObjectRegistry::registerHybridObjectConstructor(
+      "ConcealCrypto",
+      []() -> std::shared_ptr<HybridObject> {
+        static_assert(std::is_default_constructible_v<HybridConcealCrypto>,
+                      "The HybridObject \"HybridConcealCrypto\" is not default-constructible! "
+                      "Create a public constructor that takes zero arguments to be able to autolink this HybridObject.");
+        return std::make_shared<HybridConcealCrypto>();
+      }
+    );
   });
 }
 
 } // namespace margelo::nitro::concealcrypto
+
+// JNI_OnLoad automatically calls initialize() when library loads
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
+  return margelo::nitro::concealcrypto::initialize(vm);
+}

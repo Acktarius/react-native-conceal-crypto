@@ -1,40 +1,25 @@
-apply plugin: 'com.android.library'
-
-group = 'expo.modules.concealcrypto'
-version = '0.1.0'
-
-def expoModulesCorePlugin = new File(
-    project(":expo-modules-core").projectDir.absolutePath,
-    "ExpoModulesCorePlugin.gradle"
-)
-apply from: expoModulesCorePlugin
-applyKotlinExpoModulesCorePlugin()
-useCoreDependencies()
-useExpoPublishing()
-
-// Toggle to follow managed SDK versions or custom ones
-def useManagedAndroidSdkVersions = false
-if (useManagedAndroidSdkVersions) {
-  useDefaultAndroidSdkVersions()
-} else {
-  buildscript {
-    ext.safeExtGet = { prop, fallback ->
-      rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-    }
-  }
-  project.android {
-    compileSdkVersion safeExtGet("compileSdkVersion", 36)
-    defaultConfig {
-      minSdkVersion safeExtGet("minSdkVersion", 24)
-      targetSdkVersion safeExtGet("targetSdkVersion", 36)
-    }
+buildscript {
+  ext.safeExtGet = { prop, fallback ->
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
   }
 }
 
+plugins {
+  id 'com.android.library'
+  id 'org.jetbrains.kotlin.android'
+}
+
+group = 'concealcrypto'
+version = '0.1.0'
+
 android {
-  namespace "expo.modules.concealcrypto"
+  namespace "concealcrypto"
+  
+  compileSdkVersion safeExtGet("compileSdkVersion", 34)
 
   defaultConfig {
+    minSdkVersion safeExtGet("minSdkVersion", 24)
+    targetSdkVersion safeExtGet("targetSdkVersion", 34)
     versionCode 1
     versionName "0.1.0"
 
@@ -42,6 +27,18 @@ android {
     ndk {
       abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
     }
+
+    // Configure CMake to use shared C++ STL (required by fbjni and React Native)
+    externalNativeBuild {
+      cmake {
+        arguments "-DANDROID_STL=c++_shared"
+      }
+    }
+  }
+
+  // Enable Prefab so CMake can find fbjni, ReactAndroid, etc.
+  buildFeatures {
+    prefab true
   }
 
   buildTypes {
@@ -50,29 +47,58 @@ android {
     }
   }
 
-  lintOptions {
+  lint {
     abortOnError false
+  }
+
+  // Include generated Kotlin files from Nitrogen
+  sourceSets {
+    main {
+      java {
+        srcDirs += ['../nitrogen/generated/android/kotlin']
+      }
+    }
   }
 
   // Required by Nitro to handle shared C++ libraries
   externalNativeBuild {
     cmake {
-      version "3.10.2"
       path("CMakeLists.txt")
     }
   }
 }
 
 repositories {
-  google()
-  mavenCentral()
+    google()
+    mavenCentral()
+    maven { url("$rootDir/../node_modules/react-native/android") }
+    maven { url("$rootDir/../node_modules/react-native-nitro-modules/android") }
 }
 
 dependencies {
-  // Core Expo deps come from useCoreDependencies()
-  implementation "com.facebook.fbjni:fbjni:0.3.0"
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+  // React Native (provided by the app)
+  //noinspection GradleDynamicVersion
+  implementation "com.facebook.react:react-android:+"
+  implementation "com.facebook.fbjni:fbjni:0.5.1"
+  
+  // Nitro Modules (for HybridObject, ArrayBuffer, etc.)
+  implementation project(":react-native-nitro-modules")
 
-  // Adds the Nitro runtime for JS↔C++
-  implementation "com.margelo:react-native-nitro-modules:1.0.0"
+
+  // Kotlin
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+}
+
+// Resolves "LOCAL_SRC_FILES points to a missing file" - ensures React Native libs are packaged before CMake configures
+tasks.whenTaskAdded { task ->
+  if (task.name.contains("configureCMakeDebug")) {
+    rootProject.getTasksByName("packageReactNdkDebugLibs", true).forEach {
+      task.dependsOn(it)
+    }
+  }
+  if (task.name.contains("configureCMakeRel")) {
+    rootProject.getTasksByName("packageReactNdkReleaseLibs", true).forEach {
+      task.dependsOn(it)
+    }
+  }
 }

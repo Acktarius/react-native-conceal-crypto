@@ -21,6 +21,8 @@ public protocol HybridConcealCryptoSpec_protocol: HybridObject {
   func hmacSha1(key: ArrayBuffer, data: ArrayBuffer) throws -> ArrayBuffer
   func random(bits: Double) throws -> String
   func randomBytes(bytes: Double) throws -> ArrayBuffer
+  func secretbox(message: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer) throws -> ArrayBuffer
+  func secretboxOpen(ciphertext: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer) throws -> ArrayBuffer?
 }
 
 /// See ``HybridConcealCryptoSpec``
