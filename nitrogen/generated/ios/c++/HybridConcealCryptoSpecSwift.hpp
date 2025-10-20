@@ -12,11 +12,15 @@
 // Forward declaration of `HybridConcealCryptoSpec_cxx` to properly resolve imports.
 namespace ConcealCrypto { class HybridConcealCryptoSpec_cxx; }
 
+// Forward declaration of `HybridCryptonoteSpec` to properly resolve imports.
+namespace margelo::nitro::concealcrypto { class HybridCryptonoteSpec; }
 // Forward declaration of `ArrayBuffer` to properly resolve imports.
 namespace NitroModules { class ArrayBuffer; }
 // Forward declaration of `ArrayBufferHolder` to properly resolve imports.
 namespace NitroModules { class ArrayBufferHolder; }
 
+#include <memory>
+#include "HybridCryptonoteSpec.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
 #include <string>
@@ -59,7 +63,10 @@ namespace margelo::nitro::concealcrypto {
 
   public:
     // Properties
-    
+    inline std::shared_ptr<HybridCryptonoteSpec> getCryptonote() noexcept override {
+      auto __result = _swiftPart.getCryptonote();
+      return __result;
+    }
 
   public:
     // Methods

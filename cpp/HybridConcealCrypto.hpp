@@ -9,8 +9,10 @@
 #pragma once
 #include "../nitrogen/generated/shared/c++/HybridConcealCryptoSpec.hpp"
 #include "Hmac.hpp"
+#include "HybridCryptonote.hpp"
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace margelo::nitro::concealcrypto {
 
@@ -18,7 +20,7 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
  public:
   HybridConcealCrypto();
 
-  // Functions declared in your TypeScript Nitro spec
+  // Basic crypto functions
   std::shared_ptr<ArrayBuffer> hextobin(const std::string& hex) override;
   std::string bintohex(const std::shared_ptr<ArrayBuffer>& buffer) override;
   std::shared_ptr<ArrayBuffer> chacha8(const std::shared_ptr<ArrayBuffer>& input,
@@ -37,6 +39,12 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(const std::shared_ptr<ArrayBuffer>& ciphertext,
                                                              const std::shared_ptr<ArrayBuffer>& nonce,
                                                              const std::shared_ptr<ArrayBuffer>& key) override;
+
+  // Cryptonote property getter
+  std::shared_ptr<HybridCryptonoteSpec> getCryptonote() override;
+
+ private:
+  std::shared_ptr<HybridCryptonoteSpec> _cryptonote;
 };
 
 }  // namespace margelo::nitro::concealcrypto

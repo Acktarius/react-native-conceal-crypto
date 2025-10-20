@@ -7,9 +7,14 @@
 
 #include "JHybridConcealCryptoSpec.hpp"
 
+// Forward declaration of `HybridCryptonoteSpec` to properly resolve imports.
+namespace margelo::nitro::concealcrypto { class HybridCryptonoteSpec; }
 // Forward declaration of `ArrayBuffer` to properly resolve imports.
 namespace NitroModules { class ArrayBuffer; }
 
+#include <memory>
+#include "HybridCryptonoteSpec.hpp"
+#include "JHybridCryptonoteSpec.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/JArrayBuffer.hpp>
 #include <NitroModules/JUnit.hpp>
@@ -39,7 +44,11 @@ namespace margelo::nitro::concealcrypto {
   }
 
   // Properties
-  
+  std::shared_ptr<HybridCryptonoteSpec> JHybridConcealCryptoSpec::getCryptonote() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridCryptonoteSpec::javaobject>()>("getCryptonote");
+    auto __result = method(_javaPart);
+    return __result->cthis()->shared_cast<JHybridCryptonoteSpec>();
+  }
 
   // Methods
   std::shared_ptr<ArrayBuffer> JHybridConcealCryptoSpec::hextobin(const std::string& hex) {

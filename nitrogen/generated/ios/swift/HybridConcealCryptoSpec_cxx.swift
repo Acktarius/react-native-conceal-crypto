@@ -106,7 +106,15 @@ open class HybridConcealCryptoSpec_cxx {
   }
 
   // Properties
-  
+  public final var cryptonote: bridge.std__shared_ptr_HybridCryptonoteSpec_ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__shared_ptr_HybridCryptonoteSpec_ in
+        let __cxxWrapped = self.__implementation.cryptonote.getCxxWrapper()
+        return __cxxWrapped.getCxxPart()
+      }()
+    }
+  }
 
   // Methods
   @inline(__always)

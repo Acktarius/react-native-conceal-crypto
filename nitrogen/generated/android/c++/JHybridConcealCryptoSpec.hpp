@@ -49,7 +49,7 @@ namespace margelo::nitro::concealcrypto {
 
   public:
     // Properties
-    
+    std::shared_ptr<HybridCryptonoteSpec> getCryptonote() override;
 
   public:
     // Methods

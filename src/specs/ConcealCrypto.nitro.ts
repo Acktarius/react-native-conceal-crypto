@@ -1,7 +1,8 @@
 import type { HybridObject } from 'react-native-nitro-modules';
+import type { Cryptonote } from './Cryptonote.nitro';
 
 export interface ConcealCrypto extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  // Example functions to expose to JS:
+  // Basic crypto functions
   hextobin(hex: string): ArrayBuffer;
   bintohex(buffer: ArrayBuffer): string;
   chacha8(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer): ArrayBuffer;
@@ -11,4 +12,7 @@ export interface ConcealCrypto extends HybridObject<{ ios: 'swift'; android: 'ko
   randomBytes(bytes: number): ArrayBuffer;
   secretbox(message: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer): ArrayBuffer;
   secretboxOpen(ciphertext: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer): ArrayBuffer | null;
+  
+  // Cryptonote elliptic curve operations
+  readonly cryptonote: Cryptonote;
 }

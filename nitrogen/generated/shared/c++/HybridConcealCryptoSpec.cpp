@@ -14,6 +14,7 @@ namespace margelo::nitro::concealcrypto {
     HybridObject::loadHybridMethods();
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
+      prototype.registerHybridGetter("cryptonote", &HybridConcealCryptoSpec::getCryptonote);
       prototype.registerHybridMethod("hextobin", &HybridConcealCryptoSpec::hextobin);
       prototype.registerHybridMethod("bintohex", &HybridConcealCryptoSpec::bintohex);
       prototype.registerHybridMethod("chacha8", &HybridConcealCryptoSpec::chacha8);

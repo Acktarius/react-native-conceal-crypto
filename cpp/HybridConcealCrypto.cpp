@@ -7,6 +7,7 @@
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.
  */
 #include "HybridConcealCrypto.hpp"
+#include "HybridCryptonote.hpp"
 #include "chacha.h"
 #include "mn_random.h"
 #include <sodium.h>
@@ -22,8 +23,12 @@ constexpr auto TAG = "ConcealCrypto";
 
 /**
  * Constructor — must call HybridObject(TAG) base constructor.
+ * Initialize the cryptonote sub-object.
  */
-HybridConcealCrypto::HybridConcealCrypto() : HybridObject(TAG) {}
+HybridConcealCrypto::HybridConcealCrypto() : HybridObject(TAG) {
+  // Initialize cryptonote sub-object
+  _cryptonote = std::make_shared<HybridCryptonote>();
+}
 
 /**
  * Converts a hex string (e.g. "deadbeef") into binary bytes.
@@ -211,4 +216,11 @@ std::optional<std::shared_ptr<ArrayBuffer>> HybridConcealCrypto::secretboxOpen(
     return std::nullopt; // Authentication failed
 
   return ArrayBuffer::copy(message);
+}
+
+/**
+ * Get the Cryptonote sub-object for elliptic curve operations
+ */
+std::shared_ptr<HybridCryptonoteSpec> HybridConcealCrypto::getCryptonote() {
+  return _cryptonote;
 }

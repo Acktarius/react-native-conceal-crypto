@@ -34,8 +34,10 @@ target_sources(
   ../nitrogen/generated/android/ConcealCryptoOnLoad.cpp
   # Shared Nitrogen C++ sources
   ../nitrogen/generated/shared/c++/HybridConcealCryptoSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridCryptonoteSpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridConcealCryptoSpec.cpp
+  ../nitrogen/generated/android/c++/JHybridCryptonoteSpec.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

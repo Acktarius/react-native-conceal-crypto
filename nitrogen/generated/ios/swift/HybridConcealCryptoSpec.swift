@@ -11,7 +11,7 @@ import NitroModules
 /// See ``HybridConcealCryptoSpec``
 public protocol HybridConcealCryptoSpec_protocol: HybridObject {
   // Properties
-  
+  var cryptonote: (any HybridCryptonoteSpec) { get }
 
   // Methods
   func hextobin(hex: String) throws -> ArrayBuffer

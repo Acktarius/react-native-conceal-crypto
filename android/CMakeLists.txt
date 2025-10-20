@@ -18,10 +18,17 @@ set(PACKAGE_NAME ConcealCrypto)
 add_library(${PACKAGE_NAME} SHARED
   ../cpp/install.cpp
   ../cpp/HybridConcealCrypto.cpp
+  ../cpp/HybridCryptonote.cpp
   ../cpp/Hmac.cpp
   ../cpp/chacha8.c
   ../cpp/chacha12.c
   ../cpp/mn_random.cpp
+  ../cpp/Cryptonote/crypto.cpp
+  ../cpp/Cryptonote/crypto-ops.c
+  ../cpp/Cryptonote/crypto-ops-data.c
+  ../cpp/Cryptonote/hash.c
+  ../cpp/Cryptonote/keccak.c
+  # Note: random.c not needed - we use libsodium via mn_random.cpp instead
 )
 
 #---------------------------------------------
@@ -29,6 +36,7 @@ add_library(${PACKAGE_NAME} SHARED
 #---------------------------------------------
 include_directories(
   ../cpp
+  ../cpp/Cryptonote
   ../nitrogen/generated/shared/c++
   ${CMAKE_SOURCE_DIR}/../node_modules/react-native-nitro-modules/cpp
 )

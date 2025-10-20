@@ -12,9 +12,12 @@
 namespace NitroModules { class ArrayBuffer; }
 // Forward declaration of `HybridConcealCryptoSpec` to properly resolve imports.
 namespace margelo::nitro::concealcrypto { class HybridConcealCryptoSpec; }
+// Forward declaration of `HybridCryptonoteSpec` to properly resolve imports.
+namespace margelo::nitro::concealcrypto { class HybridCryptonoteSpec; }
 
 // Include C++ defined types
 #include "HybridConcealCryptoSpec.hpp"
+#include "HybridCryptonoteSpec.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
@@ -34,6 +37,8 @@ namespace margelo::nitro::concealcrypto { class HybridConcealCryptoSpec; }
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridConcealCryptoSpec_cxx` to properly resolve imports.
 namespace ConcealCrypto { class HybridConcealCryptoSpec_cxx; }
+// Forward declaration of `HybridCryptonoteSpec_cxx` to properly resolve imports.
+namespace ConcealCrypto { class HybridCryptonoteSpec_cxx; }
 
 // Include Swift defined types
 #if __has_include("ConcealCrypto-Swift.h")
