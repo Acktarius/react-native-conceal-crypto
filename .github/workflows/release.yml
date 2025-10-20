@@ -10,6 +10,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     
     steps:
     - name: Checkout code
@@ -43,13 +46,10 @@ jobs:
       run: ls -la *.tgz
       
     - name: Create Release
-      id: create-release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2.0.4
       with:
         tag_name: ${{ github.ref_name }}
-        release_name: Release ${{ steps.package-info.outputs.version }}
+        name: Release ${{ steps.package-info.outputs.version }}
         body: |
           ## react-native-conceal-crypto v${{ steps.package-info.outputs.version }}
           
@@ -57,18 +57,9 @@ jobs:
           ```bash
           npm install ${{ steps.package-info.outputs.filename }}
           ```
-          
-          ### Changes
-          See [CHANGELOG.md](./CHANGELOG.md) for detailed changes.
+
+        files: ${{ steps.package-info.outputs.filename }}
         draft: false
         prerelease: false
-        
-    - name: Upload Package Artifact
-      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: ./${{ steps.package-info.outputs.filename }}
-        asset_name: ${{ steps.package-info.outputs.filename }}
-        asset_content_type: application/gzip
