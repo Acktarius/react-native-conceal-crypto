@@ -60,6 +60,7 @@ namespace margelo::nitro::concealcrypto {
     std::string geScalarmultBase(const std::string& secretKeyHex) override;
     std::string geDoubleScalarmultBaseVartime(const std::string& cHex, const std::string& PHex, const std::string& rHex) override;
     std::string geDoubleScalarmultPostcompVartime(const std::string& rHex, const std::string& PHex, const std::string& cHex, const std::string& IHex) override;
+    std::string cnFastHash(const std::string& inputHex) override;
 
   private:
     friend HybridBase;

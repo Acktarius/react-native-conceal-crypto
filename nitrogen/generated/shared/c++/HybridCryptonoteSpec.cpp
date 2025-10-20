@@ -21,6 +21,7 @@ namespace margelo::nitro::concealcrypto {
       prototype.registerHybridMethod("geScalarmultBase", &HybridCryptonoteSpec::geScalarmultBase);
       prototype.registerHybridMethod("geDoubleScalarmultBaseVartime", &HybridCryptonoteSpec::geDoubleScalarmultBaseVartime);
       prototype.registerHybridMethod("geDoubleScalarmultPostcompVartime", &HybridCryptonoteSpec::geDoubleScalarmultPostcompVartime);
+      prototype.registerHybridMethod("cnFastHash", &HybridCryptonoteSpec::cnFastHash);
     });
   }
 

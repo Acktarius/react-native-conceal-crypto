@@ -113,6 +113,14 @@ namespace margelo::nitro::concealcrypto {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::string cnFastHash(const std::string& inputHex) override {
+      auto __result = _swiftPart.cnFastHash(inputHex);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
 
   private:
     ConcealCrypto::HybridCryptonoteSpec_cxx _swiftPart;

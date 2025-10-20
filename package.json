@@ -1,6 +1,6 @@
 {
   "name": "react-native-conceal-crypto",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Crypto utilities for Conceal implemented in native C++ using Nitro JSI.",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
@@ -38,9 +38,6 @@
     "@react-native-community/cli": "^13.6.0",
     "@types/react": "^19.1.0",
     "clang-format": "^1.8.0",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-native": "^5.0.0",
     "nitrogen": "^0.30.2",
     "react-native": "0.82.0",
     "react-native-nitro-modules": "^0.30.2",

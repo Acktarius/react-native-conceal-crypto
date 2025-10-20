@@ -21,6 +21,7 @@ public protocol HybridCryptonoteSpec_protocol: HybridObject {
   func geScalarmultBase(secretKeyHex: String) throws -> String
   func geDoubleScalarmultBaseVartime(cHex: String, PHex: String, rHex: String) throws -> String
   func geDoubleScalarmultPostcompVartime(rHex: String, PHex: String, cHex: String, IHex: String) throws -> String
+  func cnFastHash(inputHex: String) throws -> String
 }
 
 /// See ``HybridCryptonoteSpec``

@@ -12,7 +12,7 @@ export interface ConcealCrypto extends HybridObject<{ ios: 'swift'; android: 'ko
   randomBytes(bytes: number): ArrayBuffer;
   secretbox(message: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer): ArrayBuffer;
   secretboxOpen(ciphertext: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer): ArrayBuffer | null;
-  
+
   // Cryptonote elliptic curve operations
   readonly cryptonote: Cryptonote;
 }

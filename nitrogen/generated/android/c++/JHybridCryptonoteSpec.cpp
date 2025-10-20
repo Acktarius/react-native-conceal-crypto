@@ -72,5 +72,10 @@ namespace margelo::nitro::concealcrypto {
     auto __result = method(_javaPart, jni::make_jstring(rHex), jni::make_jstring(PHex), jni::make_jstring(cHex), jni::make_jstring(IHex));
     return __result->toStdString();
   }
+  std::string JHybridCryptonoteSpec::cnFastHash(const std::string& inputHex) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(jni::alias_ref<jni::JString> /* inputHex */)>("cnFastHash");
+    auto __result = method(_javaPart, jni::make_jstring(inputHex));
+    return __result->toStdString();
+  }
 
 } // namespace margelo::nitro::concealcrypto

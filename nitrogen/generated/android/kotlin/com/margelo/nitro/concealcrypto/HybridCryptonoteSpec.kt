@@ -67,6 +67,10 @@ abstract class HybridCryptonoteSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun geDoubleScalarmultPostcompVartime(rHex: String, PHex: String, cHex: String, IHex: String): String
+  
+  @DoNotStrip
+  @Keep
+  abstract fun cnFastHash(inputHex: String): String
 
   private external fun initHybrid(): HybridData
 

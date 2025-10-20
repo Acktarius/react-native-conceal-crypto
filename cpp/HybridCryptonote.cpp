@@ -16,6 +16,7 @@
 // Forward declare crypto-ops functions
 extern "C" {
   #include "Cryptonote/crypto-ops.h"
+  void cn_fast_hash(const void *data, size_t length, char *hash);
 }
 
 // Forward declare crypto namespace functions
@@ -319,6 +320,32 @@ std::string HybridCryptonote::geDoubleScalarmultPostcompVartime(
   ge_tobytes(reinterpret_cast<unsigned char*>(&result), &result_p2);
 
   return cryptonote_utils::bintohex(result.data, CRYPTONOTE_POINT_SIZE);
+}
+
+// Optimized cnFastHash (Keccak-256) with hex string input
+// This is one of the most frequently called functions - used in every transaction!
+std::string HybridCryptonote::cnFastHash(const std::string& inputHex) {
+  // Validate hex input (must be even length)
+  if (inputHex.length() % 2 != 0) {
+    throw std::invalid_argument("Invalid hex string: must have even length");
+  }
+
+  // Convert hex to binary
+  size_t dataLen = inputHex.length() / 2;
+  std::vector<uint8_t> data(dataLen);
+  
+  if (!cryptonote_utils::hextobin(inputHex, data.data(), dataLen)) {
+    throw std::invalid_argument("Invalid hex string format");
+  }
+
+  // Allocate 32-byte buffer for hash output (Keccak-256)
+  uint8_t hash[32];
+
+  // Call native Keccak-256 (cn_fast_hash from crypto-ops)
+  cn_fast_hash(data.data(), dataLen, reinterpret_cast<char*>(hash));
+
+  // Convert result to hex and return
+  return cryptonote_utils::bintohex(hash, 32);
 }
 
 }  // namespace margelo::nitro::concealcrypto

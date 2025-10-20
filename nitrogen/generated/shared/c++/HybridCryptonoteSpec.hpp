@@ -55,6 +55,7 @@ namespace margelo::nitro::concealcrypto {
       virtual std::string geScalarmultBase(const std::string& secretKeyHex) = 0;
       virtual std::string geDoubleScalarmultBaseVartime(const std::string& cHex, const std::string& PHex, const std::string& rHex) = 0;
       virtual std::string geDoubleScalarmultPostcompVartime(const std::string& rHex, const std::string& PHex, const std::string& cHex, const std::string& IHex) = 0;
+      virtual std::string cnFastHash(const std::string& inputHex) = 0;
 
     protected:
       // Hybrid Setup

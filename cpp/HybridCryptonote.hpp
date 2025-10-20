@@ -121,6 +121,10 @@ public:
     const std::string& cHex, 
     const std::string& IHex
   ) override;
+  
+  std::string cnFastHash(
+    const std::string& inputHex
+  ) override;
 
 private:
   // Fast validation for hex strings
