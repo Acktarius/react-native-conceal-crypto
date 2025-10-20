@@ -52,6 +52,14 @@ abstract class HybridConcealCryptoSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun bin2base64(buffer: ArrayBuffer): String
+  
+  @DoNotStrip
+  @Keep
+  abstract fun base642bin(base64: String): ArrayBuffer
+  
+  @DoNotStrip
+  @Keep
   abstract fun chacha8(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer): ArrayBuffer
   
   @DoNotStrip

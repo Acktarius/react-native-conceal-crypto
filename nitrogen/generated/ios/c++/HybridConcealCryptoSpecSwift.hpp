@@ -86,6 +86,22 @@ namespace margelo::nitro::concealcrypto {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::string bin2base64(const std::shared_ptr<ArrayBuffer>& buffer) override {
+      auto __result = _swiftPart.bin2base64(ArrayBufferHolder(buffer));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<ArrayBuffer> base642bin(const std::string& base64) override {
+      auto __result = _swiftPart.base642bin(base64);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::shared_ptr<ArrayBuffer> chacha8(const std::shared_ptr<ArrayBuffer>& input, const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& iv) override {
       auto __result = _swiftPart.chacha8(ArrayBufferHolder(input), ArrayBufferHolder(key), ArrayBufferHolder(iv));
       if (__result.hasError()) [[unlikely]] {

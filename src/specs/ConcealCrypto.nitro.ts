@@ -5,6 +5,8 @@ export interface ConcealCrypto extends HybridObject<{ ios: 'swift'; android: 'ko
   // Basic crypto functions
   hextobin(hex: string): ArrayBuffer;
   bintohex(buffer: ArrayBuffer): string;
+  bin2base64(buffer: ArrayBuffer): string;
+  base642bin(base64: string): ArrayBuffer;
   chacha8(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer): ArrayBuffer;
   chacha12(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer): ArrayBuffer;
   hmacSha1(key: ArrayBuffer, data: ArrayBuffer): ArrayBuffer;

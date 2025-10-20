@@ -57,6 +57,8 @@ namespace margelo::nitro::concealcrypto {
       // Methods
       virtual std::shared_ptr<ArrayBuffer> hextobin(const std::string& hex) = 0;
       virtual std::string bintohex(const std::shared_ptr<ArrayBuffer>& buffer) = 0;
+      virtual std::string bin2base64(const std::shared_ptr<ArrayBuffer>& buffer) = 0;
+      virtual std::shared_ptr<ArrayBuffer> base642bin(const std::string& base64) = 0;
       virtual std::shared_ptr<ArrayBuffer> chacha8(const std::shared_ptr<ArrayBuffer>& input, const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& iv) = 0;
       virtual std::shared_ptr<ArrayBuffer> chacha12(const std::shared_ptr<ArrayBuffer>& input, const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& iv) = 0;
       virtual std::shared_ptr<ArrayBuffer> hmacSha1(const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& data) = 0;

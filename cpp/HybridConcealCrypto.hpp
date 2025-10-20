@@ -23,6 +23,8 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   // Basic crypto functions
   std::shared_ptr<ArrayBuffer> hextobin(const std::string& hex) override;
   std::string bintohex(const std::shared_ptr<ArrayBuffer>& buffer) override;
+  std::string bin2base64(const std::shared_ptr<ArrayBuffer>& buffer) override;
+  std::shared_ptr<ArrayBuffer> base642bin(const std::string& base64) override;
   std::shared_ptr<ArrayBuffer> chacha8(const std::shared_ptr<ArrayBuffer>& input,
                                        const std::shared_ptr<ArrayBuffer>& key,
                                        const std::shared_ptr<ArrayBuffer>& iv) override;

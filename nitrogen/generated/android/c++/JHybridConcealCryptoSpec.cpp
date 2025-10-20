@@ -61,6 +61,16 @@ namespace margelo::nitro::concealcrypto {
     auto __result = method(_javaPart, JArrayBuffer::wrap(buffer));
     return __result->toStdString();
   }
+  std::string JHybridConcealCryptoSpec::bin2base64(const std::shared_ptr<ArrayBuffer>& buffer) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(jni::alias_ref<JArrayBuffer::javaobject> /* buffer */)>("bin2base64");
+    auto __result = method(_javaPart, JArrayBuffer::wrap(buffer));
+    return __result->toStdString();
+  }
+  std::shared_ptr<ArrayBuffer> JHybridConcealCryptoSpec::base642bin(const std::string& base64) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JArrayBuffer::javaobject>(jni::alias_ref<jni::JString> /* base64 */)>("base642bin");
+    auto __result = method(_javaPart, jni::make_jstring(base64));
+    return __result->cthis()->getArrayBuffer();
+  }
   std::shared_ptr<ArrayBuffer> JHybridConcealCryptoSpec::chacha8(const std::shared_ptr<ArrayBuffer>& input, const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& iv) {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JArrayBuffer::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* input */, jni::alias_ref<JArrayBuffer::javaobject> /* key */, jni::alias_ref<JArrayBuffer::javaobject> /* iv */)>("chacha8");
     auto __result = method(_javaPart, JArrayBuffer::wrap(input), JArrayBuffer::wrap(key), JArrayBuffer::wrap(iv));
