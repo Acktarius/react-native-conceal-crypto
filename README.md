@@ -90,6 +90,96 @@ const postcompMult = concealCrypto.cryptonote.geDoubleScalarmultPostcompVartime(
 const hex = concealCrypto.bintohex(buffer);
 ```
 
+## Integrating Nitro in your app (Android)
+
+In some setups (especially local development with Nitro), you may need small scripts to ensure Gradle picks up Nitro and to initialize the module at app start.
+
+### 1) Ensure Nitro is included in `settings.gradle`
+
+If your app uses Expo config plugins or you generate config at build time, add in plugin section of `app.config.ts`, a script like ` './scripts/withNitroModulesPlugin',` to append the `react-native-nitro-modules` include when missing:
+
+```js
+// app.config.ts
+const { withSettingsGradle } = require('@expo/config-plugins');
+
+module.exports = function withNitroModulesPlugin(config) {
+  return withSettingsGradle(config, (cfg) => {
+    const nitroBlock = `
+include(":react-native-nitro-modules")
+project(":react-native-nitro-modules").projectDir = new File(rootProject.projectDir, "../node_modules/react-native-nitro-modules/android")
+`;
+    if (!cfg.modResults.contents.includes('react-native-nitro-modules')) {
+      cfg.modResults.contents += `\n// Added by withNitroModulesPlugin\n${nitroBlock}`;
+    }
+    return cfg;
+  });
+};
+```
+
+Run this before building (or as part of your build pipeline) so Gradle resolves the Nitro Android project correctly.
+
+### 2) Initialize the Nitro module in `MainApplication.kt`
+
+Some projects benefit from explicitly calling the Nitro OnLoad initializer in the app's `onCreate()`. You can automate the insertion with a small Node script:
+
+```js
+// scripts/patch-mainapplication-nitro.js
+const fs = require('fs');
+const path = require('path');
+
+// Path to your parent app's MainApplication.kt
+const MAIN_APP_PATH = path.join(
+  __dirname,
+  '..',
+  'android',
+  'app',
+  'src',
+  'main',
+  'java',
+  'com',
+  'acktarius',
+  'conceal2faapp',
+  'MainApplication.kt'
+);
+
+// Nitro module Kotlin OnLoad path
+const NITRO_INIT_PACKAGE = 'com.margelo.nitro.concealcrypto';
+const NITRO_INIT_CLASS = 'ConcealCryptoOnLoad';
+const NITRO_IMPORT = `import ${NITRO_INIT_PACKAGE}.${NITRO_INIT_CLASS}`;
+const NITRO_INIT_CALL = `${NITRO_INIT_CLASS}.initializeNative()`;
+
+function insertInit(source) {
+  let result = source;
+  if (!result.includes(NITRO_IMPORT)) {
+    result = result.replace(/(package .+?\n)/, `$1${NITRO_IMPORT}\n`);
+  }
+  if (!result.includes(NITRO_INIT_CALL)) {
+    result = result.replace(
+      /(override fun onCreate\(\)\s*\{\s*super\.onCreate\(\);?)/,
+      `$1\n        ${NITRO_INIT_CALL}`
+    );
+  }
+  return result;
+}
+
+fs.readFile(MAIN_APP_PATH, 'utf8', (err, data) => {
+  if (err) {
+    console.error('❌ Could not find MainApplication.kt:', err.message);
+    return;
+  }
+  const updated = insertInit(data);
+  fs.writeFile(MAIN_APP_PATH, updated, 'utf8', (err) => {
+    if (err) {
+      console.error('❌ Failed to update MainApplication.kt:', err.message);
+    } else {
+      console.log('✅ ConcealCryptoOnLoad.initializeNative() added successfully!');
+    }
+  });
+});
+```
+
+Tip: run these scripts after a clean and before building (e.g., in CI or `prebuild`) to keep your app stable when Nitro is a local dependency.
+
 ## License
 
 MIT
