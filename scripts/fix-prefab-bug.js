@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
 
 const CMAKELISTS_FILE = 'android/CMakeLists.txt';
 

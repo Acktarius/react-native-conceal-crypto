@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
 
 const AUTOLINKING_FILE = 'nitrogen/generated/android/ConcealCrypto+autolinking.cmake';
 
