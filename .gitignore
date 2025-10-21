@@ -5,3 +5,6 @@ build/
 coverage/
 android/.cxx/
 *.tgz
+.idea/
+.idea/** */
+.idea/**/** */

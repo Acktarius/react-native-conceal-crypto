@@ -10,6 +10,7 @@
 
 
 #include <string>
+#include <vector>
 
 namespace margelo::nitro::concealcrypto {
 
@@ -76,6 +77,33 @@ namespace margelo::nitro::concealcrypto {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(jni::alias_ref<jni::JString> /* inputHex */)>("cnFastHash");
     auto __result = method(_javaPart, jni::make_jstring(inputHex));
     return __result->toStdString();
+  }
+  std::string JHybridCryptonoteSpec::encodeVarint(double value) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(double /* value */)>("encodeVarint");
+    auto __result = method(_javaPart, value);
+    return __result->toStdString();
+  }
+  std::vector<std::string> JHybridCryptonoteSpec::generateRingSignature(const std::string& prefixHashHex, const std::string& keyImageHex, const std::vector<std::string>& publicKeysHex, const std::string& secretKeyHex, double secretIndex) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<jni::JString>>(jni::alias_ref<jni::JString> /* prefixHashHex */, jni::alias_ref<jni::JString> /* keyImageHex */, jni::alias_ref<jni::JArrayClass<jni::JString>> /* publicKeysHex */, jni::alias_ref<jni::JString> /* secretKeyHex */, double /* secretIndex */)>("generateRingSignature");
+    auto __result = method(_javaPart, jni::make_jstring(prefixHashHex), jni::make_jstring(keyImageHex), [&]() {
+      size_t __size = publicKeysHex.size();
+      jni::local_ref<jni::JArrayClass<jni::JString>> __array = jni::JArrayClass<jni::JString>::newArray(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        const auto& __element = publicKeysHex[__i];
+        __array->setElement(__i, *jni::make_jstring(__element));
+      }
+      return __array;
+    }(), jni::make_jstring(secretKeyHex), secretIndex);
+    return [&]() {
+      size_t __size = __result->size();
+      std::vector<std::string> __vector;
+      __vector.reserve(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        auto __element = __result->getElement(__i);
+        __vector.push_back(__element->toStdString());
+      }
+      return __vector;
+    }();
   }
 
 } // namespace margelo::nitro::concealcrypto

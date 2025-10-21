@@ -16,6 +16,7 @@
 
 
 #include <string>
+#include <vector>
 
 namespace margelo::nitro::concealcrypto {
 
@@ -56,6 +57,8 @@ namespace margelo::nitro::concealcrypto {
       virtual std::string geDoubleScalarmultBaseVartime(const std::string& cHex, const std::string& PHex, const std::string& rHex) = 0;
       virtual std::string geDoubleScalarmultPostcompVartime(const std::string& rHex, const std::string& PHex, const std::string& cHex, const std::string& IHex) = 0;
       virtual std::string cnFastHash(const std::string& inputHex) = 0;
+      virtual std::string encodeVarint(double value) = 0;
+      virtual std::vector<std::string> generateRingSignature(const std::string& prefixHashHex, const std::string& keyImageHex, const std::vector<std::string>& publicKeysHex, const std::string& secretKeyHex, double secretIndex) = 0;
 
     protected:
       // Hybrid Setup

@@ -22,6 +22,8 @@ public protocol HybridCryptonoteSpec_protocol: HybridObject {
   func geDoubleScalarmultBaseVartime(cHex: String, PHex: String, rHex: String) throws -> String
   func geDoubleScalarmultPostcompVartime(rHex: String, PHex: String, cHex: String, IHex: String) throws -> String
   func cnFastHash(inputHex: String) throws -> String
+  func encodeVarint(value: Double) throws -> String
+  func generateRingSignature(prefixHashHex: String, keyImageHex: String, publicKeysHex: [String], secretKeyHex: String, secretIndex: Double) throws -> [String]
 }
 
 /// See ``HybridCryptonoteSpec``

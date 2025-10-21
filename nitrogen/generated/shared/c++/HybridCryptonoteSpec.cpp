@@ -22,6 +22,8 @@ namespace margelo::nitro::concealcrypto {
       prototype.registerHybridMethod("geDoubleScalarmultBaseVartime", &HybridCryptonoteSpec::geDoubleScalarmultBaseVartime);
       prototype.registerHybridMethod("geDoubleScalarmultPostcompVartime", &HybridCryptonoteSpec::geDoubleScalarmultPostcompVartime);
       prototype.registerHybridMethod("cnFastHash", &HybridCryptonoteSpec::cnFastHash);
+      prototype.registerHybridMethod("encodeVarint", &HybridCryptonoteSpec::encodeVarint);
+      prototype.registerHybridMethod("generateRingSignature", &HybridCryptonoteSpec::generateRingSignature);
     });
   }
 

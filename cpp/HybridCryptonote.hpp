@@ -21,6 +21,9 @@ constexpr size_t CRYPTONOTE_KEY_SIZE = 32;
 constexpr size_t CRYPTONOTE_POINT_SIZE = 32;
 constexpr size_t CRYPTONOTE_DERIVATION_SIZE = 32;
 
+// Maximum varint size for 64-bit integer: ceil(64 / 7) = 10 bytes
+constexpr size_t MAX_VARINT_SIZE = (sizeof(uint64_t) * 8 + 6) / 7;
+
 // Pre-allocated static buffers for frequently used operations
 class CryptonoteBuffers {
 public:
@@ -124,6 +127,18 @@ public:
   
   std::string cnFastHash(
     const std::string& inputHex
+  ) override;
+  
+  std::string encodeVarint(
+    double value
+  ) override;
+  
+  std::vector<std::string> generateRingSignature(
+    const std::string& prefixHashHex,
+    const std::string& keyImageHex,
+    const std::vector<std::string>& publicKeysHex,
+    const std::string& secretKeyHex,
+    double secretIndex
   ) override;
 
 private:

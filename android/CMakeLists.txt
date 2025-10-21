@@ -28,7 +28,7 @@ add_library(${PACKAGE_NAME} SHARED
   ../cpp/Cryptonote/crypto-ops-data.c
   ../cpp/Cryptonote/hash.c
   ../cpp/Cryptonote/keccak.c
-  # Note: random.c not needed - we use libsodium via mn_random.cpp instead
+  # Note: random.c not needed - we use libsodium via randombytes_buf() instead
 )
 
 #---------------------------------------------

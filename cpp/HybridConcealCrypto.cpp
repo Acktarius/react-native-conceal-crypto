@@ -68,7 +68,7 @@ std::string HybridConcealCrypto::bintohex(const std::shared_ptr<ArrayBuffer>& bu
 
 /**
  * Converts binary bytes into a base64 string using libsodium.
- * Uses URL-safe variant without padding for JavaScript compatibility.
+ * Uses standard base64 with padding to match nacl.util.encodeBase64().
  */
 std::string HybridConcealCrypto::bin2base64(const std::shared_ptr<ArrayBuffer>& buffer) {
   if (!buffer) throw std::invalid_argument("Buffer must not be null");
@@ -76,17 +76,17 @@ std::string HybridConcealCrypto::bin2base64(const std::shared_ptr<ArrayBuffer>& 
   const uint8_t* bin = static_cast<const uint8_t*>(buffer->data());
   size_t bin_len = buffer->size();
   
-  // Calculate required base64 output size (URL-safe, no padding)
-  size_t base64_len = sodium_base64_ENCODED_LEN(bin_len, sodium_base64_VARIANT_URLSAFE_NO_PADDING);
+  // Calculate required base64 output size (standard variant with padding)
+  size_t base64_len = sodium_base64_ENCODED_LEN(bin_len, sodium_base64_VARIANT_ORIGINAL);
   std::vector<char> base64(base64_len);
   
-  // Convert to base64 using libsodium (URL-safe, no padding)
+  // Convert to base64 using libsodium (standard variant)
   char* result = sodium_bin2base64(
     base64.data(),
     base64_len,
     bin,
     bin_len,
-    sodium_base64_VARIANT_URLSAFE_NO_PADDING
+    sodium_base64_VARIANT_ORIGINAL
   );
   
   if (!result) throw std::runtime_error("Base64 encoding failed");
@@ -96,31 +96,25 @@ std::string HybridConcealCrypto::bin2base64(const std::shared_ptr<ArrayBuffer>& 
 
 /**
  * Converts a base64 string into binary bytes using libsodium.
- * Handles URL-safe variant and trims padding for JavaScript compatibility.
+ * Uses standard base64 to match nacl.util.decodeBase64().
  */
 std::shared_ptr<ArrayBuffer> HybridConcealCrypto::base642bin(const std::string& base64) {
   if (base64.empty()) throw std::invalid_argument("Base64 string must not be empty");
   
-  // Trim padding characters for compatibility
-  std::string trimmed = base64;
-  while (!trimmed.empty() && trimmed.back() == '=') {
-    trimmed.pop_back();
-  }
-  
   // Allocate buffer for binary output (max size)
-  std::vector<uint8_t> bin(trimmed.size()); // Max possible size
+  std::vector<uint8_t> bin(base64.size()); // Max possible size
   size_t bin_len;
   
-  // Convert from base64 using libsodium (URL-safe, no padding)
+  // Convert from base64 using libsodium (standard variant)
   int result = sodium_base642bin(
     bin.data(),
     bin.size(),
-    trimmed.c_str(),
-    trimmed.size(),
+    base64.c_str(),
+    base64.size(),
     nullptr,  // ignore characters
     &bin_len, // actual output length
     nullptr,  // base64_end (not needed)
-    sodium_base64_VARIANT_URLSAFE_NO_PADDING
+    sodium_base64_VARIANT_ORIGINAL
   );
   
   if (result != 0) throw std::runtime_error("Base64 decoding failed");

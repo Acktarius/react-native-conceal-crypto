@@ -82,4 +82,59 @@ export interface Cryptonote extends HybridObject<{ ios: 'swift'; android: 'kotli
    * // Returns: "592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba"
    */
   cnFastHash(inputHex: string): string;
+
+  /**
+   * Encode an unsigned integer as a variable-length integer (varint)
+
+   * Uses the Conceal/CryptoNote varint encoding:
+   * - Values < 128: encoded as single byte
+   * - Larger values: LEB128 encoding (7 bits per byte, MSB indicates continuation)
+   *
+   * @param value - Non-negative integer (0 to Number.MAX_SAFE_INTEGER = 2^53-1)
+   * @returns Hex string representing the encoded varint (2-20 chars, 1-10 bytes)
+   *
+   * @throws Error if value is negative, fractional, or outside safe integer range
+   *
+   * @example
+   * cryptonote.encodeVarint(0);      // Returns: "00"
+   * cryptonote.encodeVarint(127);    // Returns: "7f" (1 byte)
+   * cryptonote.encodeVarint(128);    // Returns: "8001" (2 bytes)
+   * cryptonote.encodeVarint(1000);   // Returns: "e807" (2 bytes)
+   * cryptonote.encodeVarint(100000); // Returns: "a08d06" (3 bytes)
+   */
+  encodeVarint(value: number): string;
+
+  /**
+   * Generate a ring signature for a transaction input
+   *
+   * Ring signatures provide anonymity by proving the signer knows one of N private keys
+   * without revealing which one. Used in every CryptoNote transaction input.
+   * 
+   * @param prefixHashHex - 64-char hex string (32 bytes) - transaction prefix hash
+   * @param keyImageHex - 64-char hex string (32 bytes) - key image of the real input
+   * @param publicKeysHex - Array of 64-char hex strings - ring member public keys (mixin + real)
+   * @param secretKeyHex - 64-char hex string (32 bytes) - secret key of real input
+   * @param secretIndex - Index of the real input in the ring (0 to publicKeysHex.length - 1)
+   * 
+   * @returns Array of 128-char hex strings (64-byte signatures) - one per ring member
+   * 
+   * @throws Error if inputs are invalid or secretIndex is out of range
+   * 
+   * @example
+   * const signatures = cryptonote.generateRingSignature(
+   *   "a1b2c3...", // prefix hash
+   *   "d4e5f6...", // key image
+   *   ["pub1...", "pub2...", "pub3..."], // 3 ring members (mixin=2 + real)
+   *   "secret...", // secret key
+   *   1 // real input is at index 1
+   * );
+   * // Returns: ["sig1...", "sig2...", "sig3..."]
+   */
+  generateRingSignature(
+    prefixHashHex: string,
+    keyImageHex: string,
+    publicKeysHex: string[],
+    secretKeyHex: string,
+    secretIndex: number
+  ): string[];
 }

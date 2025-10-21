@@ -71,6 +71,14 @@ abstract class HybridCryptonoteSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun cnFastHash(inputHex: String): String
+  
+  @DoNotStrip
+  @Keep
+  abstract fun encodeVarint(value: Double): String
+  
+  @DoNotStrip
+  @Keep
+  abstract fun generateRingSignature(prefixHashHex: String, keyImageHex: String, publicKeysHex: Array<String>, secretKeyHex: String, secretIndex: Double): Array<String>
 
   private external fun initHybrid(): HybridData
 

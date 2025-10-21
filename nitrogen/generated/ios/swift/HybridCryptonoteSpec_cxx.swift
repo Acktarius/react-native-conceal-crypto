@@ -204,4 +204,34 @@ open class HybridCryptonoteSpec_cxx {
       return bridge.create_Result_std__string_(__exceptionPtr)
     }
   }
+  
+  @inline(__always)
+  public final func encodeVarint(value: Double) -> bridge.Result_std__string_ {
+    do {
+      let __result = try self.__implementation.encodeVarint(value: value)
+      let __resultCpp = std.string(__result)
+      return bridge.create_Result_std__string_(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__string_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func generateRingSignature(prefixHashHex: std.string, keyImageHex: std.string, publicKeysHex: bridge.std__vector_std__string_, secretKeyHex: std.string, secretIndex: Double) -> bridge.Result_std__vector_std__string__ {
+    do {
+      let __result = try self.__implementation.generateRingSignature(prefixHashHex: String(prefixHashHex), keyImageHex: String(keyImageHex), publicKeysHex: publicKeysHex.map({ __item in String(__item) }), secretKeyHex: String(secretKeyHex), secretIndex: secretIndex)
+      let __resultCpp = { () -> bridge.std__vector_std__string_ in
+        var __vector = bridge.create_std__vector_std__string_(__result.count)
+        for __item in __result {
+          __vector.push_back(std.string(__item))
+        }
+        return __vector
+      }()
+      return bridge.create_Result_std__vector_std__string__(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__vector_std__string__(__exceptionPtr)
+    }
+  }
 }

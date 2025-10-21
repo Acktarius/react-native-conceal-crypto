@@ -28,11 +28,13 @@ namespace ConcealCrypto { class HybridCryptonoteSpec_cxx; }
 #include "HybridCryptonoteSpec.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
+#include <NitroModules/FastVectorCopy.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -104,6 +106,26 @@ namespace margelo::nitro::concealcrypto::bridge::swift {
   }
   inline Result_std__optional_std__shared_ptr_ArrayBuffer___ create_Result_std__optional_std__shared_ptr_ArrayBuffer___(const std::exception_ptr& error) noexcept {
     return Result<std::optional<std::shared_ptr<ArrayBuffer>>>::withError(error);
+  }
+  
+  // pragma MARK: std::vector<std::string>
+  /**
+   * Specialized version of `std::vector<std::string>`.
+   */
+  using std__vector_std__string_ = std::vector<std::string>;
+  inline std::vector<std::string> create_std__vector_std__string_(size_t size) noexcept {
+    std::vector<std::string> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: Result<std::vector<std::string>>
+  using Result_std__vector_std__string__ = Result<std::vector<std::string>>;
+  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::vector<std::string>& value) noexcept {
+    return Result<std::vector<std::string>>::withValue(value);
+  }
+  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::exception_ptr& error) noexcept {
+    return Result<std::vector<std::string>>::withError(error);
   }
 
 } // namespace margelo::nitro::concealcrypto::bridge::swift

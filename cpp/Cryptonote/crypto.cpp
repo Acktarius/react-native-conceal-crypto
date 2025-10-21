@@ -32,7 +32,10 @@ namespace crypto {
 
   extern "C" {
 #include "crypto-ops.h"
-#include "random.h"
+  }
+  // Use libsodium for random bytes (already linked via CMake)
+  extern "C" {
+    void randombytes_buf(void* const buf, const size_t size);
   }
 
   static inline unsigned char *operator &(EllipticCurvePoint &point) {
@@ -56,7 +59,7 @@ namespace crypto {
 
   static inline void random_scalar(EllipticCurveScalar &res) {
     unsigned char tmp[64];
-    generate_random_bytes(64, tmp);
+    randombytes_buf(tmp, 64);  // Use libsodium (already linked, no extra deps)
     sc_reduce(tmp);
     memcpy(&res, tmp, 32);
   }
@@ -74,6 +77,10 @@ namespace crypto {
     friend bool derive_public_key(const KeyDerivation &, size_t, const PublicKey &, PublicKey &);
     static bool derive_public_key(const KeyDerivation &, size_t, const PublicKey &, const uint8_t*, size_t, PublicKey &);
     friend bool derive_public_key(const KeyDerivation &, size_t, const PublicKey &, const uint8_t*, size_t, PublicKey &);
+    static void generate_ring_signature(const Hash &prefix_hash, const KeyImage &image,
+      const PublicKey *const *pubs, size_t pubs_count,
+      const SecretKey &sec, size_t sec_index,
+      Signature *sig);
   };
 
   void hash_to_scalar(const void *data, size_t length, EllipticCurveScalar &res)
@@ -114,8 +121,16 @@ namespace crypto {
     ge_p3_tobytes(reinterpret_cast<unsigned char*>(&pub), &point);
     return true;
   }
-  */
 
+
+  // Needed for ring signature generation (debug assertions)
+  
+
+  bool crypto_ops::check_key(const PublicKey &key) {
+    ge_p3 point;
+    return ge_frombytes_vartime(&point, reinterpret_cast<const unsigned char*>(&key)) == 0;
+  }
+*/
   bool crypto_ops::generate_key_derivation(const PublicKey &key1, const SecretKey &key2, KeyDerivation &derivation) {
     ge_p3 point;
     ge_p2 point2;
@@ -213,7 +228,7 @@ namespace crypto {
     return crypto_ops::derive_public_key(derivation, output_index, base, suffix, suffixLength, derived_key);
   }
 
-  // hash_to_ec: Hash a public key to an elliptic curve point
+  // KeyImage version - used by HybridCryptonote.cpp geDoubleScalarmultPostcompVartime
   void hash_to_ec(const PublicKey &key, KeyImage &res) {
     ge_p3 point;
     Hash h;
@@ -226,7 +241,7 @@ namespace crypto {
     ge_p3_tobytes(reinterpret_cast<unsigned char*>(&res), &point);
   }
 
-  // COMMENTED OUT - All functions below not needed for generate_key_derivation / derive_public_key
+  // COMMENTED OUT - Most functions below not needed for basic operations
   /*
   bool crypto_ops::underive_public_key_and_get_scalar(const KeyDerivation &derivation, size_t output_index,
     const PublicKey &derived_key, PublicKey &base, EllipticCurveScalar &hashed_derivation) {
@@ -478,7 +493,7 @@ void crypto_ops::generate_tx_proof(const Hash &prefix_hash, const PublicKey &R, 
     sc_sub(reinterpret_cast<unsigned char*>(&c2), reinterpret_cast<unsigned char*>(&c2), reinterpret_cast<const unsigned char*>(&sig));
     return sc_isnonzero(&c2) == 0;
   }
-
+*/
   static void hash_to_ec(const PublicKey &key, ge_p3 &res) {
     Hash h;
     ge_p2 point;
@@ -488,7 +503,7 @@ void crypto_ops::generate_tx_proof(const Hash &prefix_hash, const PublicKey &R, 
     ge_mul8(&point2, &point);
     ge_p1p1_to_p3(&res, &point2);
   }
-
+/*
   KeyImage crypto_ops::scalarmultKey(const KeyImage & P, const KeyImage & a) {
     ge_p3 A;
     ge_p2 R;
@@ -510,7 +525,7 @@ void crypto_ops::generate_tx_proof(const Hash &prefix_hash, const PublicKey &R, 
     ge_p1p1_to_p2(&point, &point2);
     ge_tobytes(reinterpret_cast<unsigned char*>(&key), &point);
   }
-  
+
   void crypto_ops::generate_key_image(const PublicKey &pub, const SecretKey &sec, KeyImage &image) {
     ge_p3 point;
     ge_p2 point2;
@@ -519,17 +534,15 @@ void crypto_ops::generate_tx_proof(const Hash &prefix_hash, const PublicKey &R, 
     ge_scalarmult(&point2, reinterpret_cast<const unsigned char*>(&sec), &point);
     ge_tobytes(reinterpret_cast<unsigned char*>(&image), &point2);
   }
-  
+
   void crypto_ops::generate_incomplete_key_image(const PublicKey &pub, EllipticCurvePoint &incomplete_key_image) {
     ge_p3 point;
     hash_to_ec(pub, point);
     ge_p3_tobytes(reinterpret_cast<unsigned char*>(&incomplete_key_image), &point);
   }
+  */
 
-#ifdef _MSC_VER
-#pragma warning(disable: 4200)
-#endif
-
+  // Ring signature structures and functions
   struct rs_comm {
     Hash h;
     struct {
@@ -552,7 +565,8 @@ void crypto_ops::generate_tx_proof(const Hash &prefix_hash, const PublicKey &R, 
     EllipticCurveScalar sum, k, h;
     rs_comm *const buf = reinterpret_cast<rs_comm *>(alloca(rs_comm_size(pubs_count)));
     assert(sec_index < pubs_count);
-#if !defined(NDEBUG)
+
+/*    #if !defined(NDEBUG)
     {
       ge_p3 t;
       PublicKey t2;
@@ -568,6 +582,7 @@ void crypto_ops::generate_tx_proof(const Hash &prefix_hash, const PublicKey &R, 
       }
     }
 #endif
+*/
     if (ge_frombytes_vartime(&image_unp, reinterpret_cast<const unsigned char*>(&image)) != 0) {
       abort();
     }
@@ -603,6 +618,7 @@ void crypto_ops::generate_tx_proof(const Hash &prefix_hash, const PublicKey &R, 
     sc_mulsub(reinterpret_cast<unsigned char*>(&sig[sec_index]) + 32, reinterpret_cast<unsigned char*>(&sig[sec_index]), reinterpret_cast<const unsigned char*>(&sec), reinterpret_cast<unsigned char*>(&k));
   }
 
+  /*
   bool crypto_ops::check_ring_signature(const Hash &prefix_hash, const KeyImage &image,
     const PublicKey *const *pubs, size_t pubs_count,
     const Signature *sig) {

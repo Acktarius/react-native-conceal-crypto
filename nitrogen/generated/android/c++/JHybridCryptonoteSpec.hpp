@@ -61,6 +61,8 @@ namespace margelo::nitro::concealcrypto {
     std::string geDoubleScalarmultBaseVartime(const std::string& cHex, const std::string& PHex, const std::string& rHex) override;
     std::string geDoubleScalarmultPostcompVartime(const std::string& rHex, const std::string& PHex, const std::string& cHex, const std::string& IHex) override;
     std::string cnFastHash(const std::string& inputHex) override;
+    std::string encodeVarint(double value) override;
+    std::vector<std::string> generateRingSignature(const std::string& prefixHashHex, const std::string& keyImageHex, const std::vector<std::string>& publicKeysHex, const std::string& secretKeyHex, double secretIndex) override;
 
   private:
     friend HybridBase;

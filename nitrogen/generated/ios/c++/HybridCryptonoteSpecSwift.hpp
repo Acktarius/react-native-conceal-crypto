@@ -15,6 +15,7 @@ namespace ConcealCrypto { class HybridCryptonoteSpec_cxx; }
 
 
 #include <string>
+#include <vector>
 
 #include "ConcealCrypto-Swift-Cxx-Umbrella.hpp"
 
@@ -115,6 +116,22 @@ namespace margelo::nitro::concealcrypto {
     }
     inline std::string cnFastHash(const std::string& inputHex) override {
       auto __result = _swiftPart.cnFastHash(inputHex);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::string encodeVarint(double value) override {
+      auto __result = _swiftPart.encodeVarint(std::forward<decltype(value)>(value));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::vector<std::string> generateRingSignature(const std::string& prefixHashHex, const std::string& keyImageHex, const std::vector<std::string>& publicKeysHex, const std::string& secretKeyHex, double secretIndex) override {
+      auto __result = _swiftPart.generateRingSignature(prefixHashHex, keyImageHex, publicKeysHex, secretKeyHex, std::forward<decltype(secretIndex)>(secretIndex));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

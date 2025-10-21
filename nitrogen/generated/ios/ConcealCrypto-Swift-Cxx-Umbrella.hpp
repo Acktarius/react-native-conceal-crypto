@@ -24,6 +24,7 @@ namespace margelo::nitro::concealcrypto { class HybridCryptonoteSpec; }
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 // C++ helpers for Swift
 #include "ConcealCrypto-Swift-Cxx-Bridge.hpp"
