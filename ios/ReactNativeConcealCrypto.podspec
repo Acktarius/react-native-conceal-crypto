@@ -23,6 +23,9 @@ Pod::Spec.new do |s|
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
+    'CLANG_CXX_LANGUAGE_STANDARD' => 'c++20',
+    'SWIFT_VERSION' => '5.9',
   }
 
   s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"
