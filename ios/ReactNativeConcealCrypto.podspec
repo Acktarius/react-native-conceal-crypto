@@ -20,13 +20,14 @@ Pod::Spec.new do |s|
 
   s.dependency 'ExpoModulesCore'
 
-  # Swift/Objective-C compatibility
-  s.pod_target_xcconfig = {
-    'DEFINES_MODULE' => 'YES',
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
-    'CLANG_CXX_LANGUAGE_STANDARD' => 'c++20',
-    'SWIFT_VERSION' => '5.9',
-  }
+  # Load Nitrogen autolinking helper
+  load 'nitrogen/generated/ios/ConcealCrypto+autolinking.rb'
+  add_nitrogen_files(s)
 
-  s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"
+  # Additional iOS configuration
+  s.pod_target_xcconfig = s.pod_target_xcconfig.merge({
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
+    'SWIFT_VERSION' => '5.9',
+  })
+
 end
