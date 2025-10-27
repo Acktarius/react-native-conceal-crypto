@@ -9,6 +9,7 @@ Pod::Spec.new do |s|
   s.license      = package['license']
   s.author       = package['author']
   s.platforms    = { :ios => '15.1' }
+  s.ios.deployment_target = '15.1'
   s.source       = { :git => package['repository']['url'], :tag => "v#{s.version}" }
 
   # C++ implementation files (matching CMakeLists.txt structure)
@@ -22,12 +23,13 @@ Pod::Spec.new do |s|
 
   # Dependencies
   s.dependency 'React-Core'
-  s.dependency 'libsodium'
+  s.dependency 'libsodium', '~> 1.0'
 
   # iOS-specific compiler settings
   s.pod_target_xcconfig = {
     'CLANG_CXX_LANGUAGE_STANDARD' => 'c++20',
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386'
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
+    'ENABLE_BITCODE' => 'NO'
   }
 end
 
