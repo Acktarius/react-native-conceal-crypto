@@ -25,11 +25,10 @@ Pod::Spec.new do |s|
   s.dependency 'React-Core'
   s.dependency 'libsodium', '~> 1.0'
 
-  # iOS-specific compiler settings
-  s.pod_target_xcconfig = {
-    'CLANG_CXX_LANGUAGE_STANDARD' => 'c++20',
+  # Additional compiler settings (merged with autolinking defaults)
+  s.pod_target_xcconfig = s.pod_target_xcconfig.merge({
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
     'ENABLE_BITCODE' => 'NO'
-  }
+  })
 end
 
