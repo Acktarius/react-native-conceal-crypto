@@ -73,7 +73,6 @@ Pod::Spec.new do |s|
     'cpp/**/*.{h,hpp,cpp,c,mm}',
     'ios/libsodium-stable/src/libsodium/**/*.{h,c}',
   ]
-  s.exclude_files = ['cpp/random.c', 'cpp/random.h']
 
   # iOS-specific compiler settings (set BEFORE nitrogen autolinking)
   sodium_headers = [
