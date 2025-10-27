@@ -18,7 +18,10 @@ Pod::Spec.new do |s|
   s.source          = { :path => "." }
   s.static_framework = true
 
-  s.dependency 'ExpoModulesCore'
+  # Add C++ source files
+  s.source_files = [
+    'cpp/**/*.{cpp,hpp,h,mm}'
+  ]
 
   # Load Nitrogen autolinking helper
   load 'nitrogen/generated/ios/ConcealCrypto+autolinking.rb'
