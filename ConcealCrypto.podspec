@@ -25,9 +25,9 @@ Pod::Spec.new do |s|
   s.dependency 'libsodium', '~> 1.0.18'
 
   # iOS-specific compiler settings
-  s.pod_target_xcconfig = s.pod_target_xcconfig.merge({
+  s.pod_target_xcconfig = {
     'CLANG_CXX_LANGUAGE_STANDARD' => 'c++20',
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386'
-  })
+  }
 end
 
