@@ -8,33 +8,13 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-// Forward declaration of `ArrayBufferHolder` to properly resolve imports.
-namespace NitroModules { class ArrayBufferHolder; }
-// Forward declaration of `ArrayBuffer` to properly resolve imports.
-namespace NitroModules { class ArrayBuffer; }
-// Forward declaration of `HybridConcealCryptoSpec` to properly resolve imports.
-namespace margelo::nitro::concealcrypto { class HybridConcealCryptoSpec; }
-// Forward declaration of `HybridCryptonoteSpec` to properly resolve imports.
-namespace margelo::nitro::concealcrypto { class HybridCryptonoteSpec; }
+
 
 // Forward declarations of Swift defined types
-// Forward declaration of `HybridConcealCryptoSpec_cxx` to properly resolve imports.
-namespace ConcealCrypto { class HybridConcealCryptoSpec_cxx; }
-// Forward declaration of `HybridCryptonoteSpec_cxx` to properly resolve imports.
-namespace ConcealCrypto { class HybridCryptonoteSpec_cxx; }
+
 
 // Include C++ defined types
-#include "HybridConcealCryptoSpec.hpp"
-#include "HybridCryptonoteSpec.hpp"
-#include <NitroModules/ArrayBuffer.hpp>
-#include <NitroModules/ArrayBufferHolder.hpp>
-#include <NitroModules/FastVectorCopy.hpp>
-#include <NitroModules/Result.hpp>
-#include <exception>
-#include <memory>
-#include <optional>
-#include <string>
-#include <vector>
+
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -42,90 +22,6 @@ namespace ConcealCrypto { class HybridCryptonoteSpec_cxx; }
  */
 namespace margelo::nitro::concealcrypto::bridge::swift {
 
-  // pragma MARK: std::optional<std::shared_ptr<ArrayBuffer>>
-  /**
-   * Specialized version of `std::optional<std::shared_ptr<ArrayBuffer>>`.
-   */
-  using std__optional_std__shared_ptr_ArrayBuffer__ = std::optional<std::shared_ptr<ArrayBuffer>>;
-  inline std::optional<std::shared_ptr<ArrayBuffer>> create_std__optional_std__shared_ptr_ArrayBuffer__(const std::shared_ptr<ArrayBuffer>& value) noexcept {
-    return std::optional<std::shared_ptr<ArrayBuffer>>(value);
-  }
-  inline bool has_value_std__optional_std__shared_ptr_ArrayBuffer__(const std::optional<std::shared_ptr<ArrayBuffer>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::shared_ptr<ArrayBuffer> get_std__optional_std__shared_ptr_ArrayBuffer__(const std::optional<std::shared_ptr<ArrayBuffer>>& optional) noexcept {
-    return *optional;
-  }
   
-  // pragma MARK: std::shared_ptr<HybridCryptonoteSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridCryptonoteSpec>`.
-   */
-  using std__shared_ptr_HybridCryptonoteSpec_ = std::shared_ptr<HybridCryptonoteSpec>;
-  std::shared_ptr<HybridCryptonoteSpec> create_std__shared_ptr_HybridCryptonoteSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridCryptonoteSpec_(std__shared_ptr_HybridCryptonoteSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridCryptonoteSpec>
-  using std__weak_ptr_HybridCryptonoteSpec_ = std::weak_ptr<HybridCryptonoteSpec>;
-  inline std__weak_ptr_HybridCryptonoteSpec_ weakify_std__shared_ptr_HybridCryptonoteSpec_(const std::shared_ptr<HybridCryptonoteSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: std::shared_ptr<HybridConcealCryptoSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridConcealCryptoSpec>`.
-   */
-  using std__shared_ptr_HybridConcealCryptoSpec_ = std::shared_ptr<HybridConcealCryptoSpec>;
-  std::shared_ptr<HybridConcealCryptoSpec> create_std__shared_ptr_HybridConcealCryptoSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridConcealCryptoSpec_(std__shared_ptr_HybridConcealCryptoSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridConcealCryptoSpec>
-  using std__weak_ptr_HybridConcealCryptoSpec_ = std::weak_ptr<HybridConcealCryptoSpec>;
-  inline std__weak_ptr_HybridConcealCryptoSpec_ weakify_std__shared_ptr_HybridConcealCryptoSpec_(const std::shared_ptr<HybridConcealCryptoSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: Result<std::shared_ptr<ArrayBuffer>>
-  using Result_std__shared_ptr_ArrayBuffer__ = Result<std::shared_ptr<ArrayBuffer>>;
-  inline Result_std__shared_ptr_ArrayBuffer__ create_Result_std__shared_ptr_ArrayBuffer__(const std::shared_ptr<ArrayBuffer>& value) noexcept {
-    return Result<std::shared_ptr<ArrayBuffer>>::withValue(value);
-  }
-  inline Result_std__shared_ptr_ArrayBuffer__ create_Result_std__shared_ptr_ArrayBuffer__(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<ArrayBuffer>>::withError(error);
-  }
-  
-  // pragma MARK: Result<std::string>
-  using Result_std__string_ = Result<std::string>;
-  inline Result_std__string_ create_Result_std__string_(const std::string& value) noexcept {
-    return Result<std::string>::withValue(value);
-  }
-  inline Result_std__string_ create_Result_std__string_(const std::exception_ptr& error) noexcept {
-    return Result<std::string>::withError(error);
-  }
-  
-  // pragma MARK: Result<std::optional<std::shared_ptr<ArrayBuffer>>>
-  using Result_std__optional_std__shared_ptr_ArrayBuffer___ = Result<std::optional<std::shared_ptr<ArrayBuffer>>>;
-  inline Result_std__optional_std__shared_ptr_ArrayBuffer___ create_Result_std__optional_std__shared_ptr_ArrayBuffer___(const std::optional<std::shared_ptr<ArrayBuffer>>& value) noexcept {
-    return Result<std::optional<std::shared_ptr<ArrayBuffer>>>::withValue(value);
-  }
-  inline Result_std__optional_std__shared_ptr_ArrayBuffer___ create_Result_std__optional_std__shared_ptr_ArrayBuffer___(const std::exception_ptr& error) noexcept {
-    return Result<std::optional<std::shared_ptr<ArrayBuffer>>>::withError(error);
-  }
-  
-  // pragma MARK: std::vector<std::string>
-  /**
-   * Specialized version of `std::vector<std::string>`.
-   */
-  using std__vector_std__string_ = std::vector<std::string>;
-  inline std::vector<std::string> create_std__vector_std__string_(size_t size) noexcept {
-    std::vector<std::string> vector;
-    vector.reserve(size);
-    return vector;
-  }
-  
-  // pragma MARK: Result<std::vector<std::string>>
-  using Result_std__vector_std__string__ = Result<std::vector<std::string>>;
-  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::vector<std::string>& value) noexcept {
-    return Result<std::vector<std::string>>::withValue(value);
-  }
-  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::exception_ptr& error) noexcept {
-    return Result<std::vector<std::string>>::withError(error);
-  }
 
 } // namespace margelo::nitro::concealcrypto::bridge::swift

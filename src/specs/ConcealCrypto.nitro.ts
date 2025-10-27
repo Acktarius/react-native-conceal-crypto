@@ -1,7 +1,7 @@
 import type { HybridObject } from 'react-native-nitro-modules';
 import type { Cryptonote } from './Cryptonote.nitro';
 
-export interface ConcealCrypto extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+export interface ConcealCrypto extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
   // Basic crypto functions
   hextobin(hex: string): ArrayBuffer;
   bintohex(buffer: ArrayBuffer): string;

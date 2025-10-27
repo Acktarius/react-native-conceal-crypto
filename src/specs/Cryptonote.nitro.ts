@@ -6,7 +6,7 @@ import type { HybridObject } from 'react-native-nitro-modules';
  * Performance-optimized: Uses hex strings for small inputs (<100 bytes) to avoid JSI ArrayBuffer overhead.
  * Following Nitro's recommendation: "Use hex/base64 strings for short scalar inputs like public keys"
  */
-export interface Cryptonote extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+export interface Cryptonote extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
   /**
    * Generate a key derivation from a public key and secret key
    * @param publicKeyHex - 64-char hex string (32 bytes)
@@ -109,17 +109,17 @@ export interface Cryptonote extends HybridObject<{ ios: 'swift'; android: 'kotli
    *
    * Ring signatures provide anonymity by proving the signer knows one of N private keys
    * without revealing which one. Used in every CryptoNote transaction input.
-   * 
+   *
    * @param prefixHashHex - 64-char hex string (32 bytes) - transaction prefix hash
    * @param keyImageHex - 64-char hex string (32 bytes) - key image of the real input
    * @param publicKeysHex - Array of 64-char hex strings - ring member public keys (mixin + real)
    * @param secretKeyHex - 64-char hex string (32 bytes) - secret key of real input
    * @param secretIndex - Index of the real input in the ring (0 to publicKeysHex.length - 1)
-   * 
+   *
    * @returns Array of 128-char hex strings (64-byte signatures) - one per ring member
-   * 
+   *
    * @throws Error if inputs are invalid or secretIndex is out of range
-   * 
+   *
    * @example
    * const signatures = cryptonote.generateRingSignature(
    *   "a1b2c3...", // prefix hash

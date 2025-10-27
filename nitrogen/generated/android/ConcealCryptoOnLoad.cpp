@@ -15,8 +15,6 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
-#include "JHybridConcealCryptoSpec.hpp"
-#include "JHybridCryptonoteSpec.hpp"
 #include "HybridConcealCrypto.hpp"
 
 namespace margelo::nitro::concealcrypto {
@@ -28,8 +26,7 @@ int initialize(JavaVM* vm) {
 
   return facebook::jni::initialize(vm, [] {
     // Register native JNI methods
-    margelo::nitro::concealcrypto::JHybridConcealCryptoSpec::registerNatives();
-    margelo::nitro::concealcrypto::JHybridCryptonoteSpec::registerNatives();
+    
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(

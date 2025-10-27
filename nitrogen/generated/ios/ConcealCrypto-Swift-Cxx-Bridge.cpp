@@ -8,42 +8,10 @@
 #include "ConcealCrypto-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
-#include "ConcealCrypto-Swift-Cxx-Umbrella.hpp"
-#include "HybridConcealCryptoSpecSwift.hpp"
-#include "HybridCryptonoteSpecSwift.hpp"
+
 
 namespace margelo::nitro::concealcrypto::bridge::swift {
 
-  // pragma MARK: std::shared_ptr<HybridCryptonoteSpec>
-  std::shared_ptr<HybridCryptonoteSpec> create_std__shared_ptr_HybridCryptonoteSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
-    ConcealCrypto::HybridCryptonoteSpec_cxx swiftPart = ConcealCrypto::HybridCryptonoteSpec_cxx::fromUnsafe(swiftUnsafePointer);
-    return std::make_shared<margelo::nitro::concealcrypto::HybridCryptonoteSpecSwift>(swiftPart);
-  }
-  void* NON_NULL get_std__shared_ptr_HybridCryptonoteSpec_(std__shared_ptr_HybridCryptonoteSpec_ cppType) {
-    std::shared_ptr<margelo::nitro::concealcrypto::HybridCryptonoteSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::concealcrypto::HybridCryptonoteSpecSwift>(cppType);
-    #ifdef NITRO_DEBUG
-    if (swiftWrapper == nullptr) [[unlikely]] {
-      throw std::runtime_error("Class \"HybridCryptonoteSpec\" is not implemented in Swift!");
-    }
-    #endif
-    ConcealCrypto::HybridCryptonoteSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
-    return swiftPart.toUnsafe();
-  }
   
-  // pragma MARK: std::shared_ptr<HybridConcealCryptoSpec>
-  std::shared_ptr<HybridConcealCryptoSpec> create_std__shared_ptr_HybridConcealCryptoSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
-    ConcealCrypto::HybridConcealCryptoSpec_cxx swiftPart = ConcealCrypto::HybridConcealCryptoSpec_cxx::fromUnsafe(swiftUnsafePointer);
-    return std::make_shared<margelo::nitro::concealcrypto::HybridConcealCryptoSpecSwift>(swiftPart);
-  }
-  void* NON_NULL get_std__shared_ptr_HybridConcealCryptoSpec_(std__shared_ptr_HybridConcealCryptoSpec_ cppType) {
-    std::shared_ptr<margelo::nitro::concealcrypto::HybridConcealCryptoSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::concealcrypto::HybridConcealCryptoSpecSwift>(cppType);
-    #ifdef NITRO_DEBUG
-    if (swiftWrapper == nullptr) [[unlikely]] {
-      throw std::runtime_error("Class \"HybridConcealCryptoSpec\" is not implemented in Swift!");
-    }
-    #endif
-    ConcealCrypto::HybridConcealCryptoSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
-    return swiftPart.toUnsafe();
-  }
 
 } // namespace margelo::nitro::concealcrypto::bridge::swift
