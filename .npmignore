@@ -12,3 +12,5 @@ __tests__
 /android/src/test/
 /android/build/
 /example/
+/ios/libsodium-stable/
+/ios/libsodium.tar.gz
