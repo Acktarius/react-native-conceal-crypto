@@ -8,8 +8,6 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-// Forward declaration of `ArrayBuffer` to properly resolve imports.
-namespace NitroModules { class ArrayBuffer; }
 // Forward declaration of `HybridConcealCryptoSpec` to properly resolve imports.
 namespace margelo::nitro::concealcrypto { class HybridConcealCryptoSpec; }
 // Forward declaration of `HybridCryptonoteSpec` to properly resolve imports.

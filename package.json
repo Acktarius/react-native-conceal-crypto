@@ -54,6 +54,7 @@
     "android/",
     "ios/",
     "nitrogen/generated/",
+    "ConcealCrypto.podspec",
     "package.json",
     "README.md",
     "react-native.config.js",

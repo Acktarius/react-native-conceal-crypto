@@ -10,8 +10,6 @@
 // Forward declarations of C++ defined types
 // Forward declaration of `ArrayBufferHolder` to properly resolve imports.
 namespace NitroModules { class ArrayBufferHolder; }
-// Forward declaration of `ArrayBuffer` to properly resolve imports.
-namespace NitroModules { class ArrayBuffer; }
 // Forward declaration of `HybridConcealCryptoSpec` to properly resolve imports.
 namespace margelo::nitro::concealcrypto { class HybridConcealCryptoSpec; }
 // Forward declaration of `HybridCryptonoteSpec` to properly resolve imports.
@@ -28,7 +26,6 @@ namespace ConcealCrypto { class HybridCryptonoteSpec_cxx; }
 #include "HybridCryptonoteSpec.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
-#include <NitroModules/FastVectorCopy.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <memory>
