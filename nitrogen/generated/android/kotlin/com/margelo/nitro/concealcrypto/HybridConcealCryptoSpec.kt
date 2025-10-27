@@ -10,8 +10,7 @@ package com.margelo.nitro.concealcrypto
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
-import com.margelo.nitro.core.ArrayBuffer
-import com.margelo.nitro.core.HybridObject
+import com.margelo.nitro.core.*
 
 /**
  * A Kotlin class representing the ConcealCrypto HybridObject.

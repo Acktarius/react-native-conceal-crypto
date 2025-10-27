@@ -14,6 +14,8 @@ namespace ConcealCrypto { class HybridConcealCryptoSpec_cxx; }
 
 // Forward declaration of `HybridCryptonoteSpec` to properly resolve imports.
 namespace margelo::nitro::concealcrypto { class HybridCryptonoteSpec; }
+// Forward declaration of `ArrayBuffer` to properly resolve imports.
+namespace NitroModules { class ArrayBuffer; }
 // Forward declaration of `ArrayBufferHolder` to properly resolve imports.
 namespace NitroModules { class ArrayBufferHolder; }
 

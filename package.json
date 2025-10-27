@@ -38,15 +38,15 @@
     "@react-native-community/cli": "^13.6.0",
     "@types/react": "^19.1.0",
     "clang-format": "^1.8.0",
-    "nitrogen": "^0.31.2",
+    "nitrogen": "^0.30.2",
     "react-native": "0.82.0",
-    "react-native-nitro-modules": "^0.31.2",
+    "react-native-nitro-modules": "^0.30.2",
     "typescript": "^5.5.0"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-nitro-modules": "^0.31.2"
+    "react-native-nitro-modules": "^0.30.2"
   },
   "files": [
     "cpp/",
