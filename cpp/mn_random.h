@@ -14,10 +14,6 @@
 #include <vector>
 #include <cstdint>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * Generate cryptographically secure random data in multiples of 32 bits
  * Returns hex string representation
@@ -36,9 +32,5 @@ std::string mn_random(int bits);
  * @throws std::runtime_error if random generation fails
  */
 std::vector<uint8_t> mn_random_bytes(int bytes);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* MN_RANDOM_H */
