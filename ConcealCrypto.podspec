@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
 
   # Dependencies
   s.dependency 'React-Core'
-  s.dependency 'libsodium', '~> 1.0.18'
+  s.dependency 'libsodium'
 
   # iOS-specific compiler settings
   s.pod_target_xcconfig = {
